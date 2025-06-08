@@ -454,16 +454,16 @@ class Application(Frame):
                 if line.startswith('[ECO '):
                     eco_code = line.split('"')[1]
                 
-                if line.startswith('1. '):
+                if line.startswith('1.'):
                     moves_record = ''
                     clean_string = ''
                     start = True
                 
                 if start:
+                    
                     moves_record += line
-                
-                    if line.find(' 1-0') > 0 or line.find(' 0-1') > 0 or line.find(' 1/2-1/2') > 0: # 
-                        
+
+                    if line.endswith('1-0') or line.endswith('0-1') > 0 or line.endswith('1/2-1/2'): # 
                         start = False
                         
                         moves_record = moves_record.replace('\n',' ')
