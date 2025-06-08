@@ -1,0 +1,650 @@
+import tkinter
+from tkinter import *
+
+from tkinter.ttk import *
+from tkinter import messagebox
+
+import os
+
+from time import time, sleep
+from datetime import datetime, timedelta
+
+import subprocess as sp
+
+import dbaccess as db
+
+class Application(Frame):
+
+    def __init__(self, master):
+
+        self.master = master
+        self.main_container = Frame(self.master)
+
+        # Define the source and target folder variables
+
+        self.origin = os.getcwd()
+        self.pointer = 0
+        self.tag = StringVar()
+        self.tagSelect = StringVar()
+        self.player = StringVar()
+        self.description = StringVar()
+        self.opening = StringVar()
+        self.allMoves = []
+        self.allComments = {}
+        self.winner = IntVar()
+        self.advantage = IntVar()
+        self.whiteWin = IntVar()
+        self.blackWin = IntVar()
+        self.drawGame = IntVar()
+        self.tagList = []
+
+        # Create main frame
+        self.main_container.grid(column=0, row=0, sticky=(N,S,E,W))
+
+        # Set Label styles
+        Style().configure("M.TLabel", font="Courier 20 bold", height="20", foreground="blue", anchor="center")
+        Style().configure("B.TLabel", font="Verdana 8", background="white", width="25")
+        Style().configure("G.TLabel", font="Verdana 8")
+        Style().configure("L.TLabel", font="Courier 40 bold", width="8")
+        Style().configure("MS.TLabel", font="Verdana 10" )
+        Style().configure("S.TLabel", font="Verdana 8" )
+        Style().configure("G.TLabel", font="Verdana 8")
+
+        # Set button styles
+        Style().configure("B.TButton", font="Verdana 8", relief="ridge")
+
+        # Set check button styles
+        Style().configure("B.TCheckbutton", font="Verdana 8")
+        Style().configure("B.TRadiobutton", font="Verdana 8")
+        Style().configure("O.TLabelframe.Label", font="Verdana 8", foreground="black")
+
+        # Create widgets
+        self.sep_a = Separator(self.main_container, orient=HORIZONTAL)
+        self.sep_b = Separator(self.main_container, orient=HORIZONTAL)
+        self.sep_c = Separator(self.main_container, orient=HORIZONTAL)
+        self.sep_d = Separator(self.main_container, orient=HORIZONTAL)
+        self.sep_e = Separator(self.main_container, orient=HORIZONTAL)
+        self.sep_f = Separator(self.main_container, orient=HORIZONTAL)
+        self.sep_g = Separator(self.main_container, orient=HORIZONTAL)
+        self.sep_h = Separator(self.main_container, orient=HORIZONTAL)
+        self.sep_i = Separator(self.main_container, orient=HORIZONTAL)
+        self.mainLabel = Label(self.main_container, text="GAME MOVES", style="M.TLabel" )
+
+        self.tagOpt = LabelFrame(self.main_container, text=' TAG ', style="O.TLabelframe")
+        self.tagPattern = Entry(self.tagOpt, textvariable=self.tag, width="18")
+        self.openingOpt = LabelFrame(self.main_container, text=' OPENING ', style="O.TLabelframe")
+        self.openingName = Entry(self.openingOpt, textvariable=self.opening, width="50")
+        self.playerOpt = LabelFrame(self.main_container, text=' PLAYER ', style="O.TLabelframe")
+        self.playerName = Entry(self.playerOpt, textvariable=self.player, width="18")
+        self.results = LabelFrame(self.main_container, text=' RESULTS ', style="O.TLabelframe")
+        self.white = Checkbutton(self.results, text=" White ", style="B.TCheckbutton", variable=self.whiteWin)
+        self.black = Checkbutton(self.results, text=" Black ", style="B.TCheckbutton", variable=self.blackWin)
+        self.draw = Checkbutton(self.results, text=" Draw ", style="B.TCheckbutton", variable=self.drawGame)
+
+        self.fetch = Button(self.main_container, text="GET GAMES", style="B.TButton", width=32, command=self.buildGameList)
+        self.reset = Button(self.main_container, text="RESET OPTIONS", style="B.TButton", width=32, command=self.resetProcess)
+        
+        self.gameOptions = LabelFrame(self.main_container, text=' SELECT GAMES ', style="O.TLabelframe")
+        self.gameList = Listbox(self.gameOptions, selectmode='single', width=60, height=5)
+        self.gscroller = Scrollbar(self.gameOptions, orient=VERTICAL, command=self.gameList.yview)
+        self.gameList.config(font=("Courier New", 8), yscrollcommand=self.gscroller.set)
+
+        self.start = Button(self.main_container, text="PLAY", style="B.TButton", command=self.startGame)
+        
+        self.exit = Button(self.main_container, text="EXIT", style="B.TButton", command=self.exitApp)
+
+        # Position widgets
+        self.mainLabel.grid(row=0, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        
+        self.sep_a.grid(row=1, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+
+        self.tagPattern.grid(row=0, column=0, padx=10, pady=(5,10), sticky='NSEW')
+        self.tagOpt.grid(row=2, column=0, columnspan=1, padx=5, pady=5, sticky='NSEW')
+        self.openingName.grid(row=0, column=0, padx=10, pady=(5,10), sticky='NSEW')
+        self.openingOpt.grid(row=2, column=1, columnspan=3, padx=5, pady=5, sticky='NSEW')
+        self.playerName.grid(row=0, column=0, padx=10, pady=(5,10), sticky='NSEW')
+        self.playerOpt.grid(row=3, column=0, columnspan=1, padx=5, pady=5, sticky='NSEW')
+
+        self.white.grid(row=0, column=0, padx=10, pady=(5,10), sticky='NSW')
+        self.black.grid(row=0, column=0, padx=(120,10), pady=(5,10), sticky='NSW')
+        self.draw.grid(row=0, column=0, padx=(240,10), pady=(5,10), sticky='NSW')
+        self.results.grid(row=3, column=1, columnspan=3, padx=5, pady=5, sticky='NSEW')
+
+        self.sep_b.grid(row=4, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        
+        self.fetch.grid(row=5, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.reset.grid(row=5, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
+
+        self.sep_c.grid(row=7, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+                
+        self.gameList.grid(row=0, column=0, columnspan=3, padx=5, pady=5, sticky='W')
+        self.gscroller.grid(row=0, column=3, columnspan=1, padx=5, pady=5, sticky='W')
+        self.gameOptions.grid(row=8, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+
+        self.start.grid(row=10, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        
+        self.sep_e.grid(row=11, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        
+        self.exit.grid(row=12, column=0, columnspan=4, padx=5, pady=0, sticky='NSEW')
+
+        self.dataconn = db.databaseConn()
+        self.processControl(1)
+
+    def buildGameList(self):
+
+        self.gameList.delete(0, END)
+        
+        if self.check_options() == 0:
+            messagebox.showerror("Selection error.","Enter or select options")
+            return
+
+        select_sql = "select tag, opening, white, black, result from game_details "
+
+        where_count = 0
+
+        if self.tag.get():
+            add_text = self.tag.get()
+            if where_count == 0:
+                select_sql = self.add_where(0, select_sql, f"tag like '{add_text}%'")
+                where_count += 1
+
+        if self.opening.get():
+            add_text = self.opening.get().capitalize()
+            if add_text.isalnum():
+                pass 
+            else:
+                messagebox.showerror("Error in string","Search string contains special characters. Please remove.")
+                return
+            add_opening = f"opening like '%{add_text}%'" 
+            if where_count == 0:
+                select_sql = self.add_where(0, select_sql, add_opening)
+            else:
+                select_sql = self.add_where(1, select_sql, add_opening)
+
+            where_count += 1
+
+        if self.player.get():
+            add_text = self.player.get().capitalize()
+            if add_text.isalnum():
+                pass 
+            else:
+                messagebox.showerror("Error in string","Search string contains special characters. Please remove.")
+                return
+            
+            add_player = f"(white like '%{add_text}%' or black like '%{add_text}%')"
+            if where_count == 0:
+                select_sql = self.add_where(0, select_sql, add_player)
+            else:
+                select_sql = self.add_where(1, select_sql, add_player)
+
+            where_count += 1
+
+        if self.drawGame.get() or self.whiteWin.get() or self.blackWin.get():
+            res_count = 0
+            if self.whiteWin.get():
+                if res_count == 0:
+                    res_text = "(result = 1"    
+                else:
+                    res_text += " or result = 1 "
+                res_count += 1
+
+            if self.blackWin.get():
+                if res_count == 0:
+                    res_text = "(result = 2"    
+                else:
+                    res_text += " or result = 2 "
+                res_count += 1
+
+            if self.drawGame.get():
+                if res_count == 0:
+                    res_text = "(result = 0"
+                else:
+                    res_text += " or result = 0"
+                res_count += 1
+
+            res_text += ")"
+
+            if where_count == 0:
+                select_sql = self.add_where(0, select_sql, res_text)
+            else:
+                select_sql = self.add_where(1, select_sql, res_text)
+            where_count += 1
+
+        select_sql += " order by tag"
+
+        all_data = self.dataconn.execute_select(select_sql)
+
+        if len(all_data) == 0:
+            messagebox.showerror("No games found","No games found with the selection entered")
+            return
+
+        self.tagList = []
+        for dat in all_data:
+            
+            t, o, w, b, r = dat
+            
+            self.tagList.append(t)
+
+            g = t.strip() + '(' + self.checkAdvantage(r) + ')' + ' - ' + o.strip() + ' - ' + w.strip() + ' - ' + b.strip()  
+
+            self.gameList.insert(END, g)
+
+    def check_options(self):
+
+        option_count = 0
+         
+        if self.tag.get() != "":
+            option_count += 1
+
+        if self.player.get() != "":
+            option_count += 1
+
+        if self.opening.get() != "":
+            option_count += 1
+
+        if self.whiteWin.get():
+            option_count += 1
+
+        if self.blackWin.get():
+            option_count += 1
+
+        if self.drawGame.get():
+            option_count += 1
+
+        return option_count
+    
+    def add_where(self,mode, sel_sql, add_text):
+
+        if mode == 0:
+            sel_sql += "where " + add_text
+        else:
+            sel_sql += " and " + add_text
+
+        return sel_sql
+    
+    def checkAdvantage(self, res):
+
+        if res == 0:
+            self.advantage.set(0)
+            return 'D'
+        elif res == 1:
+            self.advantage.set(1)
+            return 'W'
+        else:
+            self.advantage.set(0)
+            return 'B'
+        
+    def resetProcess(self):
+        ''' reset labels, lists and flags
+        '''
+        
+        res = messagebox.askquestion(title="Reset process?", message="Do you want to reset selections?")
+
+        if res == 'no':
+            return
+
+        os.chdir(self.origin)
+
+        self.whiteWin.set(0)
+        self.blackWin.set(0)
+        self.drawGame.set(0)
+
+        self.tag.set("")
+        self.opening.set("")
+        self.player.set("")
+
+        self.gameList.delete(0, END)
+
+        self.processControl(1)
+
+    def startGame(self):
+
+        if self.gameList.curselection():
+            pass
+        else: 
+            messagebox.showerror("No game selected", "Please select game to play.")
+            return 
+        
+        self.tagSelect.set(self.tagList[self.gameList.curselection()[0]])
+
+        select_sql = f"select white_moves, black_moves from game_moves where tag = '{self.tagSelect.get()}' "
+
+        moves = self.dataconn.execute_select(select_sql)
+
+        self.displayPlayPanel()
+        
+        self.progress_bar.start()
+        
+        self.loadGameMoves(moves)
+        self.postFirstMove()
+        self.processControl(0)
+
+    def displayPlayPanel(self):
+
+        Style().configure("PS.TLabel", font="Verdana 8", height="50" )
+        self.playMoves = Toplevel(self.main_container)
+        self.playMoves.title(self.tagSelect.get())
+
+        self.pop_a = Separator(self.playMoves, orient=HORIZONTAL)
+        self.pop_b = Separator(self.playMoves, orient=HORIZONTAL)
+        self.pop_c = Separator(self.playMoves, orient=HORIZONTAL)
+        self.pop_d = Separator(self.playMoves, orient=HORIZONTAL)
+        self.pop_e = Separator(self.playMoves, orient=HORIZONTAL)
+
+        self.playPlayers = Label(self.playMoves, text=" ", style="S.TLabel" )
+        self.playOpening = Label(self.playMoves, text=" ", style="S.TLabel" )
+
+        self.whiteFrame = LabelFrame(self.playMoves, text=' WHITE ', style="O.TLabelframe")
+        self.whiteMove = Label(self.whiteFrame, text=" ", style="L.TLabel" )
+        self.blackFrame = LabelFrame(self.playMoves, text=' BLACK ', style="O.TLabelframe")
+        self.blackMove = Label(self.blackFrame, text=" ", style="L.TLabel" )
+        
+        self.next = Button(self.playMoves, text="NEXT", style="B.TButton", command=self.getNextMove)
+        self.prev = Button(self.playMoves, text="PREV", style="B.TButton", command=self.getPrevMove)
+        self.info = Button(self.playMoves, text="GAME MOVES AND INFO", style="B.TButton", command=self.displayAllMoves)
+        self.restart = Button(self.playMoves, text="RESTART", style="B.TButton", command=self.restartMoves)
+
+        self.progress_bar = Progressbar(self.playMoves, orient="horizontal", mode="indeterminate", maximum=50)
+
+        self.playOpening.configure(font=("Courier New", 10))
+        self.playPlayers.configure(font=("Courier New", 10))
+
+        self.close = Button(self.playMoves, text="CLOSE", style="B.TButton", command=self.hidePlay)
+
+        self.playPlayers.grid(row=1, column=0, columnspan=4, padx=5, pady=1, sticky="NSEW")
+        self.playOpening.grid(row=2, column=0, columnspan=4, padx=5, pady=1, sticky="NSEW")
+        
+        self.pop_a.grid(row=3, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")        
+
+        self.whiteMove.grid(row=0, column=0, columnspan=4, padx=5, pady=1, sticky="NSEW")
+        self.whiteFrame.grid(row=5, column=0, columnspan=2, padx=5, pady=5, sticky="NSEW")
+        self.blackMove.grid(row=0, column=0, columnspan=4, padx=5, pady=1, sticky="NSEW")
+        self.blackFrame.grid(row=5, column=2, columnspan=2, padx=5, pady=5, sticky="NSEW")
+
+        self.pop_b.grid(row=6, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")        
+
+        self.prev.grid(row=7, column=0, columnspan=2, padx=5, pady=0, sticky='NSEW')
+        self.next.grid(row=7, column=2, columnspan=2, padx=5, pady=0, sticky='NSEW')
+        self.restart.grid(row=8, column=0, columnspan=2, padx=5, pady=0, sticky='NSEW')
+        self.info.grid(row=8, column=2, columnspan=2, padx=5, pady=0, sticky='NSEW')
+
+        self.pop_c.grid(row=9, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
+
+        self.close.grid(row=10, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
+
+        self.pop_d.grid(row=11, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
+        
+        self.progress_bar.grid(row=12, column=0, columnspan=4, padx=5, pady=0, sticky='NSEW')
+        
+        t = self.tagSelect.get()
+
+        select_sql = f"select opening, white, black from game_details where tag = '{t}'"
+        
+        dat = self.dataconn.execute_select(select_sql)
+
+        o, w, b = dat[0]
+
+        self.playPlayers["text"] = w.strip() + " vs. " + b.strip()
+        self.playOpening["text"] = o.strip()
+
+        ph = 290
+        pw = 580
+
+        self.playMoves.maxsize(pw, ph)
+        self.playMoves.minsize(pw, ph)
+
+        ws = self.playMoves.winfo_screenwidth()
+        hs = self.playMoves.winfo_screenheight()
+
+        x = (ws/2) - (pw/2) - 200
+        y = (hs/2) - (ph/2)
+
+        self.playMoves.geometry('%dx%d+%d+%d' % (pw, ph, x, y))
+
+    def loadGameMoves(self, moves):
+
+        white_moves = moves[0][0]
+        black_moves = moves[0][1]
+
+        self.allMoves = []
+        count = 0
+
+        while True:
+
+            try:
+                if white_moves[count]:
+                    self.allMoves.append(white_moves[count].strip())
+
+                if black_moves[count]:
+                    self.allMoves.append(black_moves[count].strip())
+
+                count += 1
+            except:
+                break         
+
+        self.pointer = 0
+
+    def postFirstMove(self):
+
+        move = self.allMoves[self.pointer]
+        self.whiteMove["text"] = move
+        self.blackMove["text"] = ""
+
+    def getNextMove(self):
+
+        if self.pointer + 1== len(self.allMoves):
+            messagebox.showinfo(parent=self.playMoves, title="Last moves", message="Last moves already displayed.")
+            return
+
+        self.pointer += 1
+
+        move = self.allMoves[self.pointer]
+
+        if self.pointer % 2 == 1:
+            self.blackMove["text"] = move
+        else:
+            self.whiteMove["text"] = move
+            self.blackMove["text"] = ""
+
+    def getPrevMove(self):
+
+        if self.pointer == 0:
+            messagebox.showinfo(parent=self.playMoves, title="First moves", message="First moves already displayed.")
+            return
+
+        self.pointer -= 1
+
+        move = self.allMoves[self.pointer]
+
+        if self.pointer % 2 == 1:
+            self.blackMove["text"] = move 
+
+            white = self.allMoves[self.pointer - 1]
+            self.whiteMove["text"] = white
+        else:
+            self.whiteMove["text"] = move
+            self.blackMove["text"] = ""
+
+    def displayAllMoves(self):
+
+        Style().configure("PS.TLabel", font="Verdana 8", height="50" )
+        self.popMoves = Toplevel(self.main_container)
+        self.popMoves.title(self.tagSelect.get())
+
+        self.pop_a = Separator(self.popMoves, orient=HORIZONTAL)
+        self.pop_b = Separator(self.popMoves, orient=HORIZONTAL)
+        self.pop_c = Separator(self.popMoves, orient=HORIZONTAL)
+        self.pop_d = Separator(self.popMoves, orient=HORIZONTAL)
+        self.pop_e = Separator(self.popMoves, orient=HORIZONTAL)
+
+        self.descFrame = LabelFrame(self.popMoves, text=' DESCRIPTION ', style="O.TLabelframe")
+        self.popDescription = Text(self.descFrame, width="41", height="5" )
+
+        self.upddesc = Button(self.popMoves, text="UPDATE", style="B.TButton", command=self.updateDescription)
+
+        self.moveListFrame = LabelFrame(self.popMoves, text=' MOVES LIST ', style="O.TLabelframe")
+        self.moveList = Listbox(self.moveListFrame, width=38, height=8)
+        self.scroller = Scrollbar(self.moveListFrame, orient=VERTICAL, command=self.moveList.yview)
+        self.moveList.config(font=("Courier New", 10), yscrollcommand=self.scroller.set)
+        
+        self.closeMoves = Button(self.popMoves, text="CLOSE", style="B.TButton", command=self.hideMoves)
+
+        self.popDescription.grid(row=0, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
+        self.descFrame.grid(row=1, column=0, columnspan=4, padx=5, pady=1, sticky="NSEW")
+        self.upddesc.grid(row=2, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
+
+        self.pop_a.grid(row=3, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")        
+
+        self.moveList.grid(row=0, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.scroller.grid(row=0, column=2, columnspan=1, padx=5, pady=5, sticky='NSEW')
+        self.moveListFrame.grid(row=4, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
+
+        self.pop_c.grid(row=5, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
+
+        self.closeMoves.grid(row=6, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
+
+        self.loadMoveList()
+
+        desc = self.getDescription()
+        self.popDescription.insert(INSERT, desc)
+        
+        ph = 380
+        pw = 360
+
+        self.popMoves.maxsize(pw, ph)
+        self.popMoves.minsize(pw, ph)
+
+        ws = self.popMoves.winfo_screenwidth()
+        hs = self.popMoves.winfo_screenheight()
+
+        x = (ws/2) - (pw/2) + 300
+        y = (hs/2) - (ph/2)
+
+        self.popMoves.geometry('%dx%d+%d+%d' % (pw, ph, x, y))
+
+        self.info["state"] = DISABLED
+        self.close["state"] = DISABLED
+
+    def loadMoveList(self):
+
+        self.moveList.delete(0, END)
+        count = 1
+        idx = 0
+
+        while True:
+            
+            try:
+                w = self.allMoves[idx]
+
+                idx += 1
+
+            except:
+                break 
+
+            try:
+                b = self.allMoves[idx]
+
+                idx += 1
+
+                self.moveList.insert(END, '{:2d}'.format(count) + '. ' + w.ljust(6) + '  -  ' + b)
+
+                count += 1
+
+            except:
+                
+                self.moveList.insert(END, '{:2d}'.format(count) + '. ' + w)
+                break 
+
+    def getDescription(self):
+
+        select_sql = f"select comments from game_details where tag = '{self.tagSelect.get()}'"
+
+        desc = self.dataconn.execute_select(select_sql)[0]
+     
+        if desc[0]:
+            return desc[0].strip()
+        else:
+            return ''
+    
+    def updateDescription(self):
+
+        comment = self.popDescription.get(1.0, END).strip()
+
+        update_sql = f"update game_details set comments = '{comment}' where tag = '{self.tagSelect.get()}'"
+
+        if self.dataconn.execute_update(update_sql):
+            messagebox.showinfo("Update complete.","Updated comment successfully")
+        else:
+            messagebox.showerror("Update error.","Error updating description")
+
+    def hidePlay(self):
+
+        self.progress_bar.stop()
+        self.processControl(1)
+        self.playMoves.destroy()
+
+    def hideMoves(self):
+
+        self.info["state"] = NORMAL
+        self.close["state"] = NORMAL
+        self.popMoves.destroy()
+
+    def restartMoves(self):
+
+        res = messagebox.askquestion(parent=self.playMoves, title="Restart moves?", message="Do you want to restart game/opening?")
+
+        if res == 'no':
+            return
+
+        self.pointer = 0
+        self.postFirstMove()
+
+    def processControl(self, mode):
+        ''' enable/disable buttons as needed
+        '''
+
+        if mode:
+            
+            self.fetch["state"] = NORMAL
+            self.reset["state"] = NORMAL
+            self.start["state"] = NORMAL
+            self.exit["state"] = NORMAL
+
+        else:
+
+            self.fetch["state"] = DISABLED
+            self.reset["state"] = DISABLED
+            self.start["state"] = DISABLED
+            self.exit["state"] = DISABLED
+
+    def exitApp(self):
+
+        root.destroy()
+
+root = Tk()
+root.title("GAMES MOVES")
+
+# Set size
+
+wh = 440
+ww = 490
+
+root.resizable(height=False, width=False)
+
+root.minsize(ww, wh)
+root.maxsize(ww, wh)
+
+# Position in center screen
+
+ws = root.winfo_screenwidth()
+hs = root.winfo_screenheight()
+
+# calculate x and y coordinates for the Tk root window
+x = (ws/2) - (ww/2)
+y = (hs/2) - (wh/2)
+
+root.geometry('%dx%d+%d+%d' % (ww, wh, x, y))
+
+app = Application(root)
+
+root.mainloop()
