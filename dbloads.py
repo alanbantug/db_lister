@@ -463,7 +463,7 @@ class Application(Frame):
                     
                     moves_record += line
 
-                    if line.endswith('1-0') or line.endswith('0-1') > 0 or line.endswith('1/2-1/2'): # 
+                    if line.find('1-0') > -1 or line.find('0-1') > -1 or line.find('1/2-1/2') > -1: # 
                         start = False
                         
                         moves_record = moves_record.replace('\n',' ')
