@@ -179,6 +179,9 @@ class Application(Frame):
         self.annotated.set(0)
         self.notes.set(0)
 
+        if self.ecoSource.get():
+            self.ecoLabel["text"] = self.ecoSource.get().split("/")[-1]
+
     def setSource(self):
 
         pathname = askopenfilename()
