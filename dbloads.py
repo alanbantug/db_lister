@@ -338,7 +338,7 @@ class Application(Frame):
 
             if row[0].value == tag:
                 
-                op = row[1].value
+                op = row[1].value.strip()
                 
                 if row[2].value:
                     vr = row[2].value 
@@ -351,7 +351,7 @@ class Application(Frame):
                 elif row[5].value == "B":
                     res = 2
                     
-                return op, '', row[3].value, row[4].value, res
+                return op, '', row[3].value.strip(), row[4].value.strip(), res
             
         return None, None, None, None, None
     
