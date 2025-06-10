@@ -621,7 +621,7 @@ class Application(Frame):
 
     def loadDatabase(self):
 
-        count = 1
+        count = self.getNextCount()
         
         for k, v in self.games.items():
 
@@ -665,6 +665,24 @@ class Application(Frame):
 
             count += 1
 
+    def getNextCount(self):
+
+        tag_parm = self.tag.get()
+
+        select_sql = f"select tag from game_details where tag like '{tag_parm}%' order by tag desc limit 1"
+
+        data = self.dataconn.execute_select(select_sql)
+ 
+        if len(data) == 0:
+            return 1
+
+        digits = ''
+        for d in data[0][0]:
+            if d.isdigit():
+                digits += d 
+
+        return int(digits)
+    
 root = Tk()
 root.title("LOAD GAMES")
 
