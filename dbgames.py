@@ -135,8 +135,11 @@ class Application(Frame):
         self.gameList.delete(0, END)
         
         if self.check_options() == 0:
-            messagebox.showerror("Selection error.","Enter or select options")
-            return
+            game_count = self.getGameCount()[0][0]
+
+            res = messagebox.askquestion(title="Game count", message=f"You will extract {game_count} games. Do you want to continue?")
+            if res == 'no':
+                return
 
         select_sql = "select tag, opening, white, black, result from game_details "
 
@@ -252,7 +255,13 @@ class Application(Frame):
             option_count += 1
 
         return option_count
-    
+
+    def getGameCount(self):
+        
+        select_sql = "select count(*) from game_details "
+        
+        return self.dataconn.execute_select(select_sql)
+
     def add_where(self,mode, sel_sql, add_text):
 
         if mode == 0:
