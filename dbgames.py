@@ -342,6 +342,7 @@ class Application(Frame):
 
         self.playPlayers = Label(self.playMoves, text=" ", style="S.TLabel" )
         self.playOpening = Label(self.playMoves, text=" ", style="S.TLabel" )
+        self.playVariation = Label(self.playMoves, text=" ", style="S.TLabel" )
 
         self.whiteFrame = LabelFrame(self.playMoves, text=' WHITE ', style="O.TLabelframe")
         self.whiteMove = Label(self.whiteFrame, text=" ", style="L.TLabel" )
@@ -362,41 +363,44 @@ class Application(Frame):
 
         self.playPlayers.grid(row=1, column=0, columnspan=4, padx=5, pady=1, sticky="NSEW")
         self.playOpening.grid(row=2, column=0, columnspan=4, padx=5, pady=1, sticky="NSEW")
+        self.playVariation.grid(row=3, column=0, columnspan=4, padx=5, pady=1, sticky="NSEW")
         
-        self.pop_a.grid(row=3, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")        
+        self.pop_a.grid(row=4, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")        
 
         self.whiteMove.grid(row=0, column=0, columnspan=4, padx=5, pady=1, sticky="NSEW")
-        self.whiteFrame.grid(row=5, column=0, columnspan=2, padx=5, pady=5, sticky="NSEW")
+        self.whiteFrame.grid(row=6, column=0, columnspan=2, padx=5, pady=5, sticky="NSEW")
         self.blackMove.grid(row=0, column=0, columnspan=4, padx=5, pady=1, sticky="NSEW")
-        self.blackFrame.grid(row=5, column=2, columnspan=2, padx=5, pady=5, sticky="NSEW")
+        self.blackFrame.grid(row=6, column=2, columnspan=2, padx=5, pady=5, sticky="NSEW")
 
-        self.pop_b.grid(row=6, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")        
+        self.pop_b.grid(row=7, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")        
 
-        self.prev.grid(row=7, column=0, columnspan=2, padx=5, pady=0, sticky='NSEW')
-        self.next.grid(row=7, column=2, columnspan=2, padx=5, pady=0, sticky='NSEW')
-        self.restart.grid(row=8, column=0, columnspan=2, padx=5, pady=0, sticky='NSEW')
-        self.info.grid(row=8, column=2, columnspan=2, padx=5, pady=0, sticky='NSEW')
+        self.prev.grid(row=8, column=0, columnspan=2, padx=5, pady=0, sticky='NSEW')
+        self.next.grid(row=8, column=2, columnspan=2, padx=5, pady=0, sticky='NSEW')
+        self.restart.grid(row=9, column=0, columnspan=2, padx=5, pady=0, sticky='NSEW')
+        self.info.grid(row=9, column=2, columnspan=2, padx=5, pady=0, sticky='NSEW')
 
-        self.pop_c.grid(row=9, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
+        self.pop_c.grid(row=10, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
 
-        self.close.grid(row=10, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
+        self.close.grid(row=11, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
 
-        self.pop_d.grid(row=11, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
+        self.pop_d.grid(row=12, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
         
-        self.progress_bar.grid(row=12, column=0, columnspan=4, padx=5, pady=0, sticky='NSEW')
+        self.progress_bar.grid(row=13, column=0, columnspan=4, padx=5, pady=0, sticky='NSEW')
         
         t = self.tagSelect.get()
 
-        select_sql = f"select opening, white, black from game_details where tag = '{t}'"
+        select_sql = f"select opening, variation, white, black from game_details where tag = '{t}'"
         
         dat = self.dataconn.execute_select(select_sql)
 
-        o, w, b = dat[0]
+        o, v, w, b = dat[0]
 
         self.playPlayers["text"] = w.strip() + " vs. " + b.strip()
         self.playOpening["text"] = o.strip()
+        if v:
+            self.playVariation["text"] = v.strip()
 
-        ph = 290
+        ph = 320
         pw = 580
 
         self.playMoves.maxsize(pw, ph)

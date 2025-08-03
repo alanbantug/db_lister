@@ -280,7 +280,7 @@ class Application(Frame):
                     if ws[a+'1'].value:
                         
                         tag = ws[a+'1'].value
-                        
+
                         opening, variation, white, black, result = self.getIndexDetails(ws[a+'1'].value)
 
                         if opening:
@@ -329,7 +329,8 @@ class Application(Frame):
                                 print(e)
                                 
                                 return False
-                        # else:
+                        else:
+                            print('skipping tag ', tag)
         return True
     
     def getIndexDetails(self, tag):
@@ -344,7 +345,7 @@ class Application(Frame):
                 op = row[1].value.strip()
                 
                 if row[2].value:
-                    vr = row[2].value 
+                    vr = row[2].value[:50]
                 else:
                     vr = None
                 
