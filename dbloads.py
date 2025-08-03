@@ -354,7 +354,7 @@ class Application(Frame):
                 elif row[5].value == "B":
                     res = 2
                     
-                return op, '', row[3].value.strip(), row[4].value.strip(), res
+                return op, vr, row[3].value.strip(), row[4].value.strip(), res
             
         return None, None, None, None, None
     
