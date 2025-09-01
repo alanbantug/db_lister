@@ -40,7 +40,8 @@ class databaseConn(object):
             cur.close()
 
             return True 
-        except:
+        except Exception as e:
+            print(e)
             cur.close()
             return False
 
@@ -54,6 +55,7 @@ class databaseConn(object):
             cur.close()
 
             return True 
-        except:
+        except Exception as e:
+            print(e)
             cur.close()
             return False

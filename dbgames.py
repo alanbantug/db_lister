@@ -29,6 +29,9 @@ class Application(Frame):
         self.player = StringVar()
         self.description = StringVar()
         self.opening = StringVar()
+        self.variation = StringVar()
+        self.selNotable = IntVar()
+        self.selTactical = IntVar()
         self.allMoves = []
         self.allComments = {}
         self.winner = IntVar()
@@ -36,6 +39,8 @@ class Application(Frame):
         self.whiteWin = IntVar()
         self.blackWin = IntVar()
         self.drawGame = IntVar()
+        self.gameTactical = IntVar()
+        self.gameNotable = IntVar()
         self.tagList = []
 
         # Create main frame
@@ -76,7 +81,11 @@ class Application(Frame):
         self.openingName = Entry(self.openingOpt, textvariable=self.opening, width="50")
         self.playerOpt = LabelFrame(self.main_container, text=' PLAYER ', style="O.TLabelframe")
         self.playerName = Entry(self.playerOpt, textvariable=self.player, width="18")
+        self.variationOpt = LabelFrame(self.main_container, text=' VARIATION ', style="O.TLabelframe")
+        self.variationText = Entry(self.variationOpt, textvariable=self.variation, width="50")
         self.results = LabelFrame(self.main_container, text=' RESULTS ', style="O.TLabelframe")
+        self.optNotbl = Checkbutton(self.main_container, text=" Notable ", style="B.TCheckbutton", variable=self.selNotable)
+        self.optTactl = Checkbutton(self.main_container, text=" Tactical ", style="B.TCheckbutton", variable=self.selTactical)
         self.white = Checkbutton(self.results, text=" White ", style="B.TCheckbutton", variable=self.whiteWin)
         self.black = Checkbutton(self.results, text=" Black ", style="B.TCheckbutton", variable=self.blackWin)
         self.draw = Checkbutton(self.results, text=" Draw ", style="B.TCheckbutton", variable=self.drawGame)
@@ -104,22 +113,26 @@ class Application(Frame):
         self.openingOpt.grid(row=2, column=1, columnspan=3, padx=5, pady=5, sticky='NSEW')
         self.playerName.grid(row=0, column=0, padx=10, pady=(5,10), sticky='NSEW')
         self.playerOpt.grid(row=3, column=0, columnspan=1, padx=5, pady=5, sticky='NSEW')
+        self.variationText.grid(row=0, column=0, padx=10, pady=(5,10), sticky='NSEW')
+        self.variationOpt.grid(row=3, column=1, columnspan=3, padx=5, pady=5, sticky='NSEW')
 
+        self.optNotbl.grid(row=4, column=0, padx=10, pady=5, sticky='NSW')
         self.white.grid(row=0, column=0, padx=10, pady=(5,10), sticky='NSW')
         self.black.grid(row=0, column=0, padx=(120,10), pady=(5,10), sticky='NSW')
         self.draw.grid(row=0, column=0, padx=(240,10), pady=(5,10), sticky='NSW')
-        self.results.grid(row=3, column=1, columnspan=3, padx=5, pady=5, sticky='NSEW')
+        self.results.grid(row=4, rowspan=2, column=1, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.optTactl.grid(row=5, column=0, padx=(10), pady=(5,10), sticky='NSW')
 
-        self.sep_b.grid(row=4, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        self.sep_b.grid(row=6, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
         
-        self.fetch.grid(row=5, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
-        self.reset.grid(row=5, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.fetch.grid(row=7, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.reset.grid(row=7, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
 
-        self.sep_c.grid(row=7, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        self.sep_c.grid(row=8, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
                 
         self.gameList.grid(row=0, column=0, columnspan=3, padx=5, pady=5, sticky='W')
         self.gscroller.grid(row=0, column=3, columnspan=1, padx=5, pady=5, sticky='W')
-        self.gameOptions.grid(row=8, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        self.gameOptions.grid(row=9, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
 
         self.start.grid(row=10, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
         
@@ -213,6 +226,25 @@ class Application(Frame):
                 select_sql = self.add_where(1, select_sql, res_text)
             where_count += 1
 
+        if self.selNotable.get():
+            
+            if where_count == 0:
+                nota_text = 'notable = TRUE'
+                select_sql = self.add_where(0, select_sql, nota_text)
+            else:
+                nota_text = 'or notable = TRUE'
+                select_sql = self.add_where(1, select_sql, nota_text)
+            where_count += 1
+
+        if self.selTactical.get():
+            if where_count == 0:
+                tact_text = 'tactical = TRUE'
+                select_sql = self.add_where(0, select_sql, tact_text)
+            else:
+                tact_text = 'or tactical = TRUE'
+                select_sql = self.add_where(1, select_sql, tact_text)
+            where_count += 1
+
         select_sql += " order by tag"
 
         all_data = self.dataconn.execute_select(select_sql)
@@ -243,6 +275,15 @@ class Application(Frame):
             option_count += 1
 
         if self.opening.get() != "":
+            option_count += 1
+
+        if self.variation.get() != "":
+            option_count += 1
+
+        if self.selNotable.get():
+            option_count += 1
+
+        if self.selTactical.get():
             option_count += 1
 
         if self.whiteWin.get():
@@ -294,6 +335,8 @@ class Application(Frame):
 
         os.chdir(self.origin)
 
+        self.gameNotable.set(0)
+        self.gameTactical.set(0)
         self.whiteWin.set(0)
         self.blackWin.set(0)
         self.drawGame.set(0)
@@ -445,7 +488,7 @@ class Application(Frame):
 
     def getNextMove(self):
 
-        if self.pointer + 1== len(self.allMoves):
+        if self.pointer + 1 == len(self.allMoves):
             messagebox.showinfo(parent=self.playMoves, title="Last moves", message="Last moves already displayed.")
             return
 
@@ -458,6 +501,9 @@ class Application(Frame):
         else:
             self.whiteMove["text"] = move
             self.blackMove["text"] = ""
+
+        if self.pointer + 1 == len(self.allMoves):
+            print('Last move made, update plays here')
 
     def getPrevMove(self):
 
@@ -492,6 +538,8 @@ class Application(Frame):
 
         self.descFrame = LabelFrame(self.popMoves, text=' DESCRIPTION ', style="O.TLabelframe")
         self.popDescription = Text(self.descFrame, width="41", height="5" )
+        self.popTactical = Checkbutton(self.descFrame, text=" Tactical", style="B.TCheckbutton", variable=self.gameTactical)
+        self.popNotable = Checkbutton(self.descFrame, text=" Notable", style="B.TCheckbutton", variable=self.gameNotable)
 
         self.upddesc = Button(self.popMoves, text="UPDATE", style="B.TButton", command=self.updateDescription)
 
@@ -503,6 +551,9 @@ class Application(Frame):
         self.closeMoves = Button(self.popMoves, text="CLOSE", style="B.TButton", command=self.hideMoves)
 
         self.popDescription.grid(row=0, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
+        self.popTactical.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky="NSEW")
+        self.popNotable.grid(row=1, column=2, columnspan=2, padx=5, pady=5,sticky="NSEW")
+
         self.descFrame.grid(row=1, column=0, columnspan=4, padx=5, pady=1, sticky="NSEW")
         self.upddesc.grid(row=2, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
 
@@ -520,8 +571,16 @@ class Application(Frame):
 
         desc = self.getDescription()
         self.popDescription.insert(INSERT, desc)
+
+        self.gameTactical.set(0)
+        if self.getTactical():
+            self.gameTactical.set(1)
+
+        self.gameNotable.set(0)
+        if self.getNotable():
+            self.gameNotable.set(1)
         
-        ph = 380
+        ph = 420
         pw = 360
 
         self.popMoves.maxsize(pw, ph)
@@ -568,6 +627,28 @@ class Application(Frame):
                 self.moveList.insert(END, '{:2d}'.format(count) + '. ' + w)
                 break 
 
+    def getTactical(self):
+
+        select_sql = f"select tactical from game_details where tag = '{self.tagSelect.get()}'"
+
+        desc = self.dataconn.execute_select(select_sql)[0]
+     
+        if desc[0]:
+            return True
+        else:
+            return False
+
+    def getNotable(self):
+
+        select_sql = f"select notable from game_details where tag = '{self.tagSelect.get()}'"
+
+        desc = self.dataconn.execute_select(select_sql)[0]
+     
+        if desc[0]:
+            return True
+        else:
+            return False
+
     def getDescription(self):
 
         select_sql = f"select comments from game_details where tag = '{self.tagSelect.get()}'"
@@ -583,8 +664,20 @@ class Application(Frame):
 
         comment = self.popDescription.get(1.0, END).strip()
 
-        update_sql = f"update game_details set comments = '{comment}' where tag = '{self.tagSelect.get()}'"
+        update_sql = f"update game_details set comments = '{comment}'"
 
+        if self.gameTactical.get():
+            update_sql = update_sql + f", tactical = TRUE "
+        else:
+            update_sql = update_sql + f", tactical = FALSE "
+
+        if self.gameNotable.get():
+            update_sql = update_sql + f", notable = TRUE "
+        else:
+            update_sql = update_sql + f", notable = FALSE "
+
+        update_sql = update_sql + f" where tag = '{self.tagSelect.get()}'"
+        print(update_sql)
         if self.dataconn.execute_update(update_sql):
             messagebox.showinfo("Update complete.","Updated comment successfully")
         else:
@@ -639,7 +732,7 @@ root.title("GAMES MOVES")
 
 # Set size
 
-wh = 440
+wh = 500
 ww = 490
 
 root.resizable(height=False, width=False)
