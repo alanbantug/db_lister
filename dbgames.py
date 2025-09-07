@@ -32,6 +32,7 @@ class Application(Frame):
         self.variation = StringVar()
         self.selNotable = IntVar()
         self.selTactical = IntVar()
+        self.selPlayed = IntVar()
         self.allMoves = []
         self.allComments = {}
         self.winner = IntVar()
@@ -86,6 +87,7 @@ class Application(Frame):
         self.results = LabelFrame(self.main_container, text=' RESULTS ', style="O.TLabelframe")
         self.optNotbl = Checkbutton(self.main_container, text=" Notable ", style="B.TCheckbutton", variable=self.selNotable)
         self.optTactl = Checkbutton(self.main_container, text=" Tactical ", style="B.TCheckbutton", variable=self.selTactical)
+        self.optPlay = Checkbutton(self.main_container, text=" Unplayed ", style="B.TCheckbutton", variable=self.selPlayed)
         self.white = Checkbutton(self.results, text=" White ", style="B.TCheckbutton", variable=self.whiteWin)
         self.black = Checkbutton(self.results, text=" Black ", style="B.TCheckbutton", variable=self.blackWin)
         self.draw = Checkbutton(self.results, text=" Draw ", style="B.TCheckbutton", variable=self.drawGame)
@@ -116,29 +118,30 @@ class Application(Frame):
         self.variationText.grid(row=0, column=0, padx=10, pady=(5,10), sticky='NSEW')
         self.variationOpt.grid(row=3, column=1, columnspan=3, padx=5, pady=5, sticky='NSEW')
 
-        self.optNotbl.grid(row=4, column=0, padx=10, pady=5, sticky='NSW')
-        self.white.grid(row=0, column=0, padx=10, pady=(5,10), sticky='NSW')
-        self.black.grid(row=0, column=0, padx=(120,10), pady=(5,10), sticky='NSW')
-        self.draw.grid(row=0, column=0, padx=(240,10), pady=(5,10), sticky='NSW')
-        self.results.grid(row=4, rowspan=2, column=1, columnspan=2, padx=5, pady=5, sticky='NSEW')
-        self.optTactl.grid(row=5, column=0, padx=(10), pady=(5,10), sticky='NSW')
+        self.optNotbl.grid(row=4, column=0, padx=10, pady=2, sticky='NSW')
+        self.optTactl.grid(row=5, column=0, padx=10, pady=2, sticky='NSW')
+        self.optPlay.grid(row=6, column=0, padx=10, pady=2, sticky='NSW')
+        self.white.grid(row=0, column=0, padx=10, pady=12, sticky='NSW')
+        self.black.grid(row=0, column=0, padx=(120,10), pady=12, sticky='NSW')
+        self.draw.grid(row=0, column=0, padx=(240,10), pady=12, sticky='NSW')
+        self.results.grid(row=4, rowspan=3, column=1, columnspan=2, padx=5, pady=5, sticky='NSEW')
 
-        self.sep_b.grid(row=6, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        self.sep_b.grid(row=7, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
         
-        self.fetch.grid(row=7, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
-        self.reset.grid(row=7, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.fetch.grid(row=8, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.reset.grid(row=8, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
 
-        self.sep_c.grid(row=8, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        self.sep_c.grid(row=9, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
                 
         self.gameList.grid(row=0, column=0, columnspan=3, padx=5, pady=5, sticky='W')
         self.gscroller.grid(row=0, column=3, columnspan=1, padx=5, pady=5, sticky='W')
-        self.gameOptions.grid(row=9, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        self.gameOptions.grid(row=10, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
 
-        self.start.grid(row=10, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        self.start.grid(row=11, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
         
-        self.sep_e.grid(row=11, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        self.sep_e.grid(row=12, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
         
-        self.exit.grid(row=12, column=0, columnspan=4, padx=5, pady=0, sticky='NSEW')
+        self.exit.grid(row=13, column=0, columnspan=4, padx=5, pady=0, sticky='NSEW')
 
         self.dataconn = db.databaseConn()
         self.processControl(1)
@@ -242,6 +245,15 @@ class Application(Frame):
                 select_sql = self.add_where(0, select_sql, tact_text)
             else:
                 tact_text = 'or tactical = TRUE'
+                select_sql = self.add_where(1, select_sql, tact_text)
+            where_count += 1
+
+        if self.selPlayed.get():
+            if where_count == 0:
+                tact_text = 'plays > 0 '
+                select_sql = self.add_where(0, select_sql, tact_text)
+            else:
+                tact_text = 'or plays > 0'
                 select_sql = self.add_where(1, select_sql, tact_text)
             where_count += 1
 
@@ -503,7 +515,7 @@ class Application(Frame):
             self.blackMove["text"] = ""
 
         if self.pointer + 1 == len(self.allMoves):
-            print('Last move made, update plays here')
+            self.getAndUpdatePlays()
 
     def getPrevMove(self):
 
@@ -677,11 +689,28 @@ class Application(Frame):
             update_sql = update_sql + f", notable = FALSE "
 
         update_sql = update_sql + f" where tag = '{self.tagSelect.get()}'"
-        print(update_sql)
+
         if self.dataconn.execute_update(update_sql):
             messagebox.showinfo("Update complete.","Updated comment successfully")
         else:
             messagebox.showerror("Update error.","Error updating description")
+
+    def getAndUpdatePlays(self):
+
+        get_sql = f"select plays from game_details where tag = '{self.tagSelect.get()}'"
+
+        plays = self.dataconn.execute_select(get_sql)[0][0]
+        
+        plays += 1
+
+        update_sql = f"update game_details set plays = {plays} where tag = '{self.tagSelect.get()}'"
+
+        if self.dataconn.execute_update(update_sql):
+            pass
+        else:
+            messagebox.showerror("Update error.","Error updating plays count")
+
+        pass 
 
     def hidePlay(self):
 
