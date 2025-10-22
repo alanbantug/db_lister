@@ -87,7 +87,7 @@ class Application(Frame):
         self.results = LabelFrame(self.main_container, text=' RESULTS ', style="O.TLabelframe")
         self.optNotbl = Checkbutton(self.main_container, text=" Notable ", style="B.TCheckbutton", variable=self.selNotable)
         self.optTactl = Checkbutton(self.main_container, text=" Tactical ", style="B.TCheckbutton", variable=self.selTactical)
-        self.optPlay = Checkbutton(self.main_container, text=" Unplayed ", style="B.TCheckbutton", variable=self.selPlayed)
+        self.optPlay = Checkbutton(self.main_container, text=" Played ", style="B.TCheckbutton", variable=self.selPlayed)
         self.white = Checkbutton(self.results, text=" White ", style="B.TCheckbutton", variable=self.whiteWin)
         self.black = Checkbutton(self.results, text=" Black ", style="B.TCheckbutton", variable=self.blackWin)
         self.draw = Checkbutton(self.results, text=" Draw ", style="B.TCheckbutton", variable=self.drawGame)
@@ -230,30 +230,26 @@ class Application(Frame):
             where_count += 1
 
         if self.selNotable.get():
-            
+            nota_text = 'notable = TRUE'
             if where_count == 0:
-                nota_text = 'notable = TRUE'
                 select_sql = self.add_where(0, select_sql, nota_text)
             else:
-                nota_text = 'or notable = TRUE'
                 select_sql = self.add_where(1, select_sql, nota_text)
             where_count += 1
 
         if self.selTactical.get():
+            tact_text = 'tactical = TRUE'
             if where_count == 0:
-                tact_text = 'tactical = TRUE'
                 select_sql = self.add_where(0, select_sql, tact_text)
             else:
-                tact_text = 'or tactical = TRUE'
                 select_sql = self.add_where(1, select_sql, tact_text)
             where_count += 1
 
         if self.selPlayed.get():
+            tact_text = 'plays > 0 '
             if where_count == 0:
-                tact_text = 'plays > 0 '
                 select_sql = self.add_where(0, select_sql, tact_text)
             else:
-                tact_text = 'or plays > 0'
                 select_sql = self.add_where(1, select_sql, tact_text)
             where_count += 1
 
