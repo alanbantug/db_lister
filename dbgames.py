@@ -428,6 +428,7 @@ class Application(Frame):
 
         self.playOpening.configure(font=("Courier New", 10))
         self.playPlayers.configure(font=("Courier New", 10))
+        self.playVariation.configure(font=("Courier New", 10))
 
         self.close = Button(self.playMoves, text="CLOSE", style="B.TButton", command=self.hidePlay)
 
