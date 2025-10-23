@@ -43,6 +43,8 @@ class Application(Frame):
         self.gameTactical = IntVar()
         self.gameNotable = IntVar()
         self.tagList = []
+        self.varCount = StringVar()
+        self.limitList = ['0', '0', '1', '2', '3']
 
         # Create main frame
         self.main_container.grid(column=0, row=0, sticky=(N,S,E,W))
@@ -88,6 +90,9 @@ class Application(Frame):
         self.optNotbl = Checkbutton(self.main_container, text=" Notable ", style="B.TCheckbutton", variable=self.selNotable)
         self.optTactl = Checkbutton(self.main_container, text=" Tactical ", style="B.TCheckbutton", variable=self.selTactical)
         self.optPlay = Checkbutton(self.main_container, text=" Played ", style="B.TCheckbutton", variable=self.selPlayed)
+        self.playCount = OptionMenu(self.main_container, self.varCount, *self.limitList)
+        self.playCount.config(width=2)
+
         self.white = Checkbutton(self.results, text=" White ", style="B.TCheckbutton", variable=self.whiteWin)
         self.black = Checkbutton(self.results, text=" Black ", style="B.TCheckbutton", variable=self.blackWin)
         self.draw = Checkbutton(self.results, text=" Draw ", style="B.TCheckbutton", variable=self.drawGame)
@@ -122,6 +127,7 @@ class Application(Frame):
         self.optNotbl.grid(row=4, column=0, padx=10, pady=2, sticky='NSW')
         self.optTactl.grid(row=5, column=0, padx=10, pady=2, sticky='NSW')
         self.optPlay.grid(row=6, column=0, padx=10, pady=2, sticky='NSW')
+        self.playCount.grid(row=6, column=0, padx=(80,5), pady=2, sticky='NSW')
         self.white.grid(row=0, column=0, padx=10, pady=12, sticky='NSW')
         self.black.grid(row=0, column=0, padx=(120,10), pady=12, sticky='NSW')
         self.draw.grid(row=0, column=0, padx=(240,10), pady=12, sticky='NSW')
@@ -247,7 +253,9 @@ class Application(Frame):
             where_count += 1
 
         if self.selPlayed.get():
-            tact_text = 'plays > 0 '
+
+            count = int(self.varCount.get())
+            tact_text = f'plays >= {count} '
             if where_count == 0:
                 select_sql = self.add_where(0, select_sql, tact_text)
             else:
