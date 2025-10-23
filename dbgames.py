@@ -101,6 +101,7 @@ class Application(Frame):
         self.gameList.config(font=("Courier New", 8), yscrollcommand=self.gscroller.set)
 
         self.start = Button(self.main_container, text="PLAY", style="B.TButton", command=self.startGame)
+        self.resetPlays = Button(self.main_container, text="RESET PLAYED", style="B.TButton", command=self.resetPlayed)
         
         self.exit = Button(self.main_container, text="EXIT", style="B.TButton", command=self.exitApp)
 
@@ -272,6 +273,10 @@ class Application(Frame):
 
             self.gameList.insert(END, g)
 
+        msg = f"There are {len(all_data)} games selected"
+
+        messagebox.showinfo("Games selected", msg)
+
     def check_options(self):
 
         option_count = 0
@@ -379,6 +384,20 @@ class Application(Frame):
         self.postFirstMove()
         self.processControl(0)
 
+    def resetPlayed(self):
+
+        res = messagebox.askquestion(title="Reet played games?", message="Do you want to reset played indicators?")
+
+        if res == 'no':
+            return
+
+        update_sql = f"update game_details set plays = 0"
+
+        if self.dataconn.execute_update(update_sql):
+            messagebox.showinfo("Update complete.","Updated comment successfully")
+        else:
+            messagebox.showerror("Update error.","Error updating description")
+    
     def displayPlayPanel(self):
 
         Style().configure("PS.TLabel", font="Verdana 8", height="50" )
