@@ -715,9 +715,9 @@ class Application(Frame):
         update_sql = update_sql + f" where tag = '{self.tagSelect.get()}'"
 
         if self.dataconn.execute_update(update_sql):
-            messagebox.showinfo("Update complete.","Updated comment successfully")
+            messagebox.showinfo(parent=self.popMoves, title="Update complete.",message="Updated comment successfully")
         else:
-            messagebox.showerror("Update error.","Error updating description")
+            messagebox.showerror(parent=self.popMoves,title="Update error.",message="Error updating description")
 
     def getAndUpdatePlays(self):
 
@@ -732,7 +732,7 @@ class Application(Frame):
         if self.dataconn.execute_update(update_sql):
             pass
         else:
-            messagebox.showerror("Update error.","Error updating plays count")
+            messagebox.showerror(parent=self.playMoves,title="Update error.",message="Error updating plays count")
 
         pass 
 
