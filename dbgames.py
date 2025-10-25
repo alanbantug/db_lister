@@ -44,7 +44,7 @@ class Application(Frame):
         self.gameNotable = IntVar()
         self.tagList = []
         self.varCount = StringVar()
-        self.limitList = ['0', '0', '1', '2', '3']
+        self.limitList = ['= 0', '= 0', '= 1', '>= 1', '>= 2']
 
         # Create main frame
         self.main_container.grid(column=0, row=0, sticky=(N,S,E,W))
@@ -91,7 +91,7 @@ class Application(Frame):
         self.optTactl = Checkbutton(self.main_container, text=" Tactical ", style="B.TCheckbutton", variable=self.selTactical)
         self.optPlay = Checkbutton(self.main_container, text=" Played ", style="B.TCheckbutton", variable=self.selPlayed)
         self.playCount = OptionMenu(self.main_container, self.varCount, *self.limitList)
-        self.playCount.config(width=2)
+        self.playCount.config(width=5)
 
         self.white = Checkbutton(self.results, text=" White ", style="B.TCheckbutton", variable=self.whiteWin)
         self.black = Checkbutton(self.results, text=" Black ", style="B.TCheckbutton", variable=self.blackWin)
@@ -254,11 +254,8 @@ class Application(Frame):
 
         if self.selPlayed.get():
 
-            count = int(self.varCount.get())
-            if count == 3:
-                tact_text = f'plays >= {count} '
-            else:
-                tact_text = f'plays = {count} '
+            qual_count = self.varCount.get()
+            tact_text = f'plays {qual_count} '
             if where_count == 0:
                 select_sql = self.add_where(0, select_sql, tact_text)
             else:
@@ -308,6 +305,9 @@ class Application(Frame):
             option_count += 1
 
         if self.selTactical.get():
+            option_count += 1
+
+        if self.selPlayed.get():
             option_count += 1
 
         if self.whiteWin.get():
