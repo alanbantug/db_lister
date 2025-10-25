@@ -255,7 +255,7 @@ class Application(Frame):
         if self.selPlayed.get():
 
             count = int(self.varCount.get())
-            tact_text = f'plays >= {count} '
+            tact_text = f'plays = {count} '
             if where_count == 0:
                 select_sql = self.add_where(0, select_sql, tact_text)
             else:
