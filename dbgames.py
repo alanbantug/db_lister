@@ -7,7 +7,7 @@ from tkinter import messagebox
 import os
 
 from time import time, sleep
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 import subprocess as sp
 
@@ -724,20 +724,23 @@ class Application(Frame):
 
     def getAndUpdatePlays(self):
 
-        get_sql = f"select plays from game_details where tag = '{self.tagSelect.get()}'"
+        curr_date = date.today()
+
+        get_sql = f"select plays, last_play_date from game_details where tag = '{self.tagSelect.get()}'"
 
         plays = self.dataconn.execute_select(get_sql)[0][0]
-        
-        plays += 1
+        last_play = self.dataconn.execute_select(get_sql)[0][1]
 
-        update_sql = f"update game_details set plays = {plays} where tag = '{self.tagSelect.get()}'"
+        if last_play != curr_date:
 
-        if self.dataconn.execute_update(update_sql):
-            pass
-        else:
-            messagebox.showerror(parent=self.playMoves,title="Update error.",message="Error updating plays count")
+            plays += 1
 
-        pass 
+            update_sql = f"update game_details set plays = {plays}, last_play_date = '{curr_date}' where tag = '{self.tagSelect.get()}'"
+
+            if self.dataconn.execute_update(update_sql):
+                pass
+            else:
+                messagebox.showerror(parent=self.playMoves,title="Update error.",message="Error updating plays count")
 
     def hidePlay(self):
 
