@@ -176,11 +176,7 @@ class Application(Frame):
 
         if self.opening.get():
             add_text = self.opening.get().capitalize()
-            if add_text.isalnum():
-                pass 
-            else:
-                messagebox.showerror("Error in string","Search string contains special characters. Please remove.")
-                return
+            add_text = add_text.replace("'", "''")
             add_opening = f"opening like '%{add_text}%'" 
             if where_count == 0:
                 select_sql = self.add_where(0, select_sql, add_opening)
