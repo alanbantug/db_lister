@@ -44,7 +44,7 @@ class Application(Frame):
         self.gameNotable = IntVar()
         self.tagList = []
         self.varCount = StringVar()
-        self.limitList = ['= 0', '= 0', '= 1', '>= 1', '>= 2']
+        self.limitList = ['= 0', '= 0', '= 1', '>= 1', '=2', '>= 2']
 
         # Create main frame
         self.main_container.grid(column=0, row=0, sticky=(N,S,E,W))
