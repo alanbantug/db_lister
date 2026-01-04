@@ -11,6 +11,7 @@ from openpyxl import load_workbook
 from openpyxl.comments import Comment
 
 import os
+import shutil
 
 import threading
 
@@ -44,6 +45,8 @@ class Application(Frame):
         self.winner = IntVar()
         self.advantage = IntVar()
         self.showFlag = IntVar()
+        self.credSet = IntVar()
+        self.credSource = StringVar()
         self.sheetsList = ['No Selection ']
         self.sheetIdsList = ['No Selection']
 
@@ -81,6 +84,7 @@ class Application(Frame):
         self.subLabelA = Label(self.main_container, text="This utility is for loading chess games to the database or playing the", style="S.TLabel" )
         self.subLabelB = Label(self.main_container, text="games/openings loaded in the chess database.", style="S.TLabel" )
 
+        self.creds = Button(self.main_container, text="SET CREDENTIALS", style="B.TButton", command=self.setCredentials)
         self.load = Button(self.main_container, text="LOAD GAMES", style="B.TButton", command=self.loadGames)
         self.play = Button(self.main_container, text="PLAY GAMES", style="B.TButton", command=self.playGames)
         self.exit = Button(self.main_container, text="EXIT", style="B.TButton", command=root.destroy)
@@ -93,42 +97,83 @@ class Application(Frame):
         self.subLabelA.grid(row=2, column=0, columnspan=2, padx=5, pady=0, sticky='NSEW')
         self.subLabelB.grid(row=3, column=0, columnspan=2, padx=5, pady=0, sticky='NSEW')
 
-        self.sep_b.grid(row=5, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.sep_b.grid(row=4, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
 
-        self.load.grid(row=6, column=0, columnspan=1, padx=5, pady=5, sticky='NSEW')
-        self.play.grid(row=6, column=1, columnspan=1, padx=5, pady=5, sticky='NSEW')
+        self.creds.grid(row=5, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        
+        self.sep_c.grid(row=6, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
 
-        self.sep_c.grid(row=7, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.load.grid(row=7, column=0, columnspan=1, padx=5, pady=5, sticky='NSEW')
+        self.play.grid(row=7, column=1, columnspan=1, padx=5, pady=5, sticky='NSEW')
 
-        self.exit.grid(row=8, column=0, columnspan=2, padx=5, pady=0, sticky='NSEW')
+        self.sep_d.grid(row=8, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
+
+        self.exit.grid(row=9, column=0, columnspan=2, padx=5, pady=0, sticky='NSEW')
+
+        self.credSet.set(0)
+
+    def setCredentials(self):
+
+        pathname = askopenfilename()
+
+        self.credSource.set(pathname)
+        
+        if pathname:
+            try:
+                if self.credSource.get().endswith(".json"):
+                    self.updateCreds()
+                    self.credSet.set(1)
+                else:
+                    messagebox.showerror("Invalid file selected", "Invalid file type was selected. Please select again.")
+                    self.credSource.set('')
+
+            except Exception as e:
+                print(e)
+
+    def updateCreds(self):
+        
+        target = 'chess_creds.json'
+
+        try:
+            shutil.copy(self.credSource.get(), target)
+            messagebox.showinfo('Credentials set', 'Credentials successfully set')
+
+            self.credSet.set(1)
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
     def loadGames(self):
-        
-        l = threading.Thread(None, self.loadThread, ())
-        l.start()
+
+        if self.credSet.get():        
+            l = threading.Thread(None, self.loadThread, ())
+            l.start()
+        else:
+            messagebox.showerror('Credentials not set', 'Credentials not set. Please set before continuing')
 
     def loadThread(self):
         
         os.system('python dbloads.py')
-        # os.system('python C:/Users/Alan/Scripts/Code/db_lister/dbloads.py')
 
     def playGames(self):
 
-        o = threading.Thread(None, self.playThread, ())
-        o.start()
-
+        if self.credSet.get():
+            o = threading.Thread(None, self.playThread, ())
+            o.start()
+        else:
+            messagebox.showerror('Credentials not set', 'Credentials not set. Please set before continuing')
+            
     def playThread(self):
 
         os.system('python dbgames.py')
-        # os.system('python C:/Users/Alan/Scripts/Code/db_lister/dbgames.py')
 
 root = Tk()
 root.title("LOAD AND PLAY")
 
 # Set size
 
-wh = 180
-ww = 410
+wh = 225
+ww = 405
 
 root.resizable(height=False, width=False)
 
