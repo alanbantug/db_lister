@@ -179,7 +179,7 @@ class Application(Frame):
                 where_count += 1
 
         if self.opening.get():
-            add_text = self.opening.get().capitalize()
+            add_text = self.opening.get()
             add_text = add_text.replace("'", "''")
             add_opening = f"opening like '%{add_text}%'" 
             if where_count == 0:
