@@ -154,7 +154,7 @@ class Application(Frame):
     def loadThread(self):
         
         # os.system('python dbloads.py')
-        os.system('python C:/users/alanb/scripts/codedb_lister/dbloads.py')
+        os.system('python C:/users/alanb/scripts/code/db_lister/dbloads.py')
 
     def playGames(self):
 
@@ -167,7 +167,7 @@ class Application(Frame):
     def playThread(self):
 
         # os.system('python dbgames.py')
-        os.system('python C:/users/alanb/scripts/codedb_lister/dbgames.py')
+        os.system('python C:/users/alanb/scripts/code/db_lister/dbgames.py')
 
 root = Tk()
 root.title("LOAD AND PLAY")
