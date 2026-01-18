@@ -109,6 +109,7 @@ class Application(Frame):
         self.gameList.config(font=("Courier New", 8), yscrollcommand=self.gscroller.set)
 
         self.start = Button(self.main_container, text="PLAY", style="B.TButton", command=self.startGame)
+        self.export = Button(self.main_container, text="EXPORT", style="B.TButton", command=self.exportGames)
         self.resetCount = Button(self.main_container, text="RESET GAME COUNT", style="B.TButton", command=self.displayResetPanel)
         
         self.exit = Button(self.main_container, text="EXIT", style="B.TButton", command=self.exitApp)
@@ -147,12 +148,13 @@ class Application(Frame):
         self.gscroller.grid(row=0, column=3, columnspan=1, padx=5, pady=5, sticky='W')
         self.gameOptions.grid(row=10, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
 
-        self.start.grid(row=11, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
-        self.resetCount.grid(row=11, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.start.grid(row=11, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        self.export.grid(row=12, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.resetCount.grid(row=12, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
         
-        self.sep_e.grid(row=12, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        self.sep_e.grid(row=13, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
         
-        self.exit.grid(row=13, column=0, columnspan=4, padx=5, pady=0, sticky='NSEW')
+        self.exit.grid(row=14, column=0, columnspan=4, padx=5, pady=0, sticky='NSEW')
 
         self.dataconn = db.databaseConn()
         self.processControl(1)
@@ -170,98 +172,100 @@ class Application(Frame):
 
         select_sql = "select tag, opening, white, black, result from game_details "
 
-        where_count = 0
+        # where_count = 0
 
-        if self.tag.get():
-            add_text = self.tag.get()
-            if where_count == 0:
-                select_sql = self.add_where(0, select_sql, f"tag like '{add_text}%'")
-                where_count += 1
+        # if self.tag.get():
+        #     add_text = self.tag.get()
+        #     if where_count == 0:
+        #         select_sql = self.add_where(0, select_sql, f"tag like '{add_text}%'")
+        #         where_count += 1
 
-        if self.opening.get():
-            add_text = self.opening.get()
-            add_text = add_text.replace("'", "''")
-            add_opening = f"opening like '%{add_text}%'" 
-            if where_count == 0:
-                select_sql = self.add_where(0, select_sql, add_opening)
-            else:
-                select_sql = self.add_where(1, select_sql, add_opening)
+        # if self.opening.get():
+        #     add_text = self.opening.get()
+        #     add_text = add_text.replace("'", "''")
+        #     add_opening = f"opening like '%{add_text}%'" 
+        #     if where_count == 0:
+        #         select_sql = self.add_where(0, select_sql, add_opening)
+        #     else:
+        #         select_sql = self.add_where(1, select_sql, add_opening)
 
-            where_count += 1
+        #     where_count += 1
 
-        if self.player.get():
-            add_text = self.player.get().capitalize()
-            if add_text.isalnum():
-                pass 
-            else:
-                messagebox.showerror("Error in string","Search string contains special characters. Please remove.")
-                return
+        # if self.player.get():
+        #     add_text = self.player.get().capitalize()
+        #     if add_text.isalnum():
+        #         pass 
+        #     else:
+        #         messagebox.showerror("Error in string","Search string contains special characters. Please remove.")
+        #         return
             
-            add_player = f"(white like '%{add_text}%' or black like '%{add_text}%')"
-            if where_count == 0:
-                select_sql = self.add_where(0, select_sql, add_player)
-            else:
-                select_sql = self.add_where(1, select_sql, add_player)
+        #     add_player = f"(white like '%{add_text}%' or black like '%{add_text}%')"
+        #     if where_count == 0:
+        #         select_sql = self.add_where(0, select_sql, add_player)
+        #     else:
+        #         select_sql = self.add_where(1, select_sql, add_player)
 
-            where_count += 1
+        #     where_count += 1
 
-        if self.drawGame.get() or self.whiteWin.get() or self.blackWin.get():
-            res_count = 0
-            if self.whiteWin.get():
-                if res_count == 0:
-                    res_text = "(result = 1"    
-                else:
-                    res_text += " or result = 1 "
-                res_count += 1
+        # if self.drawGame.get() or self.whiteWin.get() or self.blackWin.get():
+        #     res_count = 0
+        #     if self.whiteWin.get():
+        #         if res_count == 0:
+        #             res_text = "(result = 1"    
+        #         else:
+        #             res_text += " or result = 1 "
+        #         res_count += 1
 
-            if self.blackWin.get():
-                if res_count == 0:
-                    res_text = "(result = 2"    
-                else:
-                    res_text += " or result = 2 "
-                res_count += 1
+        #     if self.blackWin.get():
+        #         if res_count == 0:
+        #             res_text = "(result = 2"    
+        #         else:
+        #             res_text += " or result = 2 "
+        #         res_count += 1
 
-            if self.drawGame.get():
-                if res_count == 0:
-                    res_text = "(result = 0"
-                else:
-                    res_text += " or result = 0"
-                res_count += 1
+        #     if self.drawGame.get():
+        #         if res_count == 0:
+        #             res_text = "(result = 0"
+        #         else:
+        #             res_text += " or result = 0"
+        #         res_count += 1
 
-            res_text += ")"
+        #     res_text += ")"
 
-            if where_count == 0:
-                select_sql = self.add_where(0, select_sql, res_text)
-            else:
-                select_sql = self.add_where(1, select_sql, res_text)
-            where_count += 1
+        #     if where_count == 0:
+        #         select_sql = self.add_where(0, select_sql, res_text)
+        #     else:
+        #         select_sql = self.add_where(1, select_sql, res_text)
+        #     where_count += 1
 
-        if self.selNotable.get():
-            nota_text = 'notable = TRUE'
-            if where_count == 0:
-                select_sql = self.add_where(0, select_sql, nota_text)
-            else:
-                select_sql = self.add_where(1, select_sql, nota_text)
-            where_count += 1
+        # if self.selNotable.get():
+        #     nota_text = 'notable = TRUE'
+        #     if where_count == 0:
+        #         select_sql = self.add_where(0, select_sql, nota_text)
+        #     else:
+        #         select_sql = self.add_where(1, select_sql, nota_text)
+        #     where_count += 1
 
-        if self.selTactical.get():
-            tact_text = 'tactical = TRUE'
-            if where_count == 0:
-                select_sql = self.add_where(0, select_sql, tact_text)
-            else:
-                select_sql = self.add_where(1, select_sql, tact_text)
-            where_count += 1
+        # if self.selTactical.get():
+        #     tact_text = 'tactical = TRUE'
+        #     if where_count == 0:
+        #         select_sql = self.add_where(0, select_sql, tact_text)
+        #     else:
+        #         select_sql = self.add_where(1, select_sql, tact_text)
+        #     where_count += 1
 
-        if self.selPlayed.get():
+        # if self.selPlayed.get():
 
-            qual_count = self.varCount.get()
-            tact_text = f'plays {qual_count} '
-            if where_count == 0:
-                select_sql = self.add_where(0, select_sql, tact_text)
-            else:
-                select_sql = self.add_where(1, select_sql, tact_text)
-            where_count += 1
+        #     qual_count = self.varCount.get()
+        #     tact_text = f'plays {qual_count} '
+        #     if where_count == 0:
+        #         select_sql = self.add_where(0, select_sql, tact_text)
+        #     else:
+        #         select_sql = self.add_where(1, select_sql, tact_text)
+        #     where_count += 1
 
+        where_statement = self.buildSelectStatement()
+        select_sql += where_statement
         select_sql += " order by tag"
 
         all_data = self.dataconn.execute_select(select_sql)
@@ -321,141 +325,7 @@ class Application(Frame):
 
         return option_count
 
-    def getGameCount(self):
-        
-        select_sql = "select count(*) from game_details "
-        
-        return self.dataconn.execute_select(select_sql)
-
-    def add_where(self,mode, sel_sql, add_text):
-
-        if mode == 0:
-            sel_sql += "where " + add_text
-        else:
-            sel_sql += " and " + add_text
-
-        return sel_sql
-    
-    def checkAdvantage(self, res):
-
-        if res == 0:
-            self.advantage.set(0)
-            return 'D'
-        elif res == 1:
-            self.advantage.set(1)
-            return 'W'
-        else:
-            self.advantage.set(0)
-            return 'B'
-        
-    def resetProcess(self):
-        ''' reset labels, lists and flags
-        '''
-        
-        res = messagebox.askquestion(title="Reset process?", message="Do you want to reset selections?")
-
-        if res == 'no':
-            return
-
-        os.chdir(self.origin)
-
-        self.gameNotable.set(0)
-        self.gameTactical.set(0)
-        self.whiteWin.set(0)
-        self.blackWin.set(0)
-        self.drawGame.set(0)
-
-        self.tag.set("")
-        self.opening.set("")
-        self.player.set("")
-
-        self.gameList.delete(0, END)
-
-        self.processControl(1)
-
-    def startGame(self):
-
-        if self.gameList.curselection():
-            pass
-        else: 
-            messagebox.showerror("No game selected", "Please select game to play.")
-            return 
-        
-        self.tagSelect.set(self.tagList[self.gameList.curselection()[0]])
-
-        select_sql = f"select white_moves, black_moves from game_moves where tag = '{self.tagSelect.get()}' "
-
-        moves = self.dataconn.execute_select(select_sql)
-
-        self.displayPlayPanel()
-        
-        self.progress_bar.start()
-        
-        self.loadGameMoves(moves)
-        self.postFirstMove()
-        self.processControl(0)
-
-    def displayResetPanel(self):
-
-        self.resetPanel = Toplevel(self.main_container)
-        self.resetPanel.title('Reset Counts')
-
-        self.res_a = Separator(self.resetPanel, orient=HORIZONTAL)
-        self.res_b = Separator(self.resetPanel, orient=HORIZONTAL)
-        self.res_c = Separator(self.resetPanel, orient=HORIZONTAL)
-
-        self.resetMainA = Label(self.resetPanel, text="RESET GAME PLAY COUNT ", style="M.TLabel" )
-        self.resetMainB = Label(self.resetPanel, text="Reset game play count of selected games ", style="S.TLabel" )
-        self.resetMainC = Label(self.resetPanel, text="to value selected below", style="S.TLabel" )
-
-        self.reset = Button(self.resetPanel, text="RESET", style="B.TButton", command=self.resetGameCount)
-        self.exitReset = Button(self.resetPanel, text="EXIT", style="B.TButton", command=self.resetPanel.destroy)
-
-        self.resetLabel = Label(self.resetPanel, text="RESET VALUE : ", style="S.TLabel" )
-        self.resetTo = OptionMenu(self.resetPanel, self.resToCount, *self.countList)
-        self.resetTo.config(width=5)
-
-        self.resetMainA.grid(row=0, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
-        self.resetMainB.grid(row=1, column=0, columnspan=4, padx=5, pady=1, sticky="NSEW")
-        self.resetMainC.grid(row=2, column=0, columnspan=4, padx=5, pady=1, sticky="NSEW")
-
-        self.res_a.grid(row=3, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
-
-        self.resetLabel.grid(row=4, column=0, columnspan=2, padx=5, pady=5, sticky="NSEW")
-        self.resetTo.grid(row=4, column=2, columnspan=2, padx=5, pady=5, sticky="NSEW")
-
-        self.res_b.grid(row=5, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
-
-        self.reset.grid(row=6, column=0, columnspan=2, padx=5, pady=5, sticky="NSEW")
-        self.exitReset.grid(row=6, column=2, columnspan=2, padx=5, pady=5, sticky="NSEW")
-
-        ph = 180
-        pw = 370
-
-        self.resetPanel.maxsize(pw, ph)
-        self.resetPanel.minsize(pw, ph)
-
-        ws = self.resetPanel.winfo_screenwidth()
-        hs = self.resetPanel.winfo_screenheight()
-
-        x = (ws/2) - (pw/2) 
-        y = (hs/2) - (ph/2)
-
-        self.resetPanel.geometry('%dx%d+%d+%d' % (pw, ph, x, y))
-
-        self.processControl(1)
-
-    def resetGameCount(self):
-
-        ''' This function will check the number of games to reset before updating
-            counts
-        ''' 
-
-        if self.check_options() == 0:
-            messagebox.askquestion(parent=self.resetPanel, title="No options", message=f"No options entered and selected. Set options before resetting.")
-            return
-
-        select_sql = "select tag, opening, white, black, result from game_details "
+    def buildSelectStatement(self):
 
         where_statement = ''
         where_count = 0
@@ -550,7 +420,304 @@ class Application(Frame):
                 where_statement = self.add_where(1, where_statement, tact_text)
             where_count += 1
 
+        return where_statement
+
+    def getGameCount(self):
+        
+        select_sql = "select count(*) from game_details "
+        
+        return self.dataconn.execute_select(select_sql)
+
+    def add_where(self,mode, sel_sql, add_text):
+
+        if mode == 0:
+            sel_sql += "where " + add_text
+        else:
+            sel_sql += " and " + add_text
+
+        return sel_sql
+    
+    def checkAdvantage(self, res):
+
+        if res == 0:
+            self.advantage.set(0)
+            return 'D'
+        elif res == 1:
+            self.advantage.set(1)
+            return 'W'
+        else:
+            self.advantage.set(0)
+            return 'B'
+        
+    def resetProcess(self):
+        ''' reset labels, lists and flags
+        '''
+        
+        res = messagebox.askquestion(title="Reset process?", message="Do you want to reset selections?")
+
+        if res == 'no':
+            return
+
+        os.chdir(self.origin)
+
+        self.gameNotable.set(0)
+        self.gameTactical.set(0)
+        self.whiteWin.set(0)
+        self.blackWin.set(0)
+        self.drawGame.set(0)
+
+        self.tag.set("")
+        self.opening.set("")
+        self.player.set("")
+
+        self.gameList.delete(0, END)
+
+        self.processControl(1)
+
+    def exportGames(self):
+        
+        if self.check_options() == 0:
+            game_count = self.getGameCount()[0][0]
+
+            res = messagebox.askquestion(title="Game count", message=f"You will extract {game_count} games. Do you want to continue?")
+            if res == 'no':
+                return
+
+        select_sql = "select tag, opening, white, black, result from game_details "
+
+        where_statement = self.buildSelectStatement()
+
+        select_sql += where_statement 
+        select_sql += " order by tag"
+
+        all_data = self.dataconn.execute_select(select_sql)
+
+        data_count = len(all_data)
+        if data_count == 0:
+            messagebox.showerror("No games found","No games found with the selection entered")
+            return
+
+        res = messagebox.askquestion("Reset played count", f"{data_count} rows will be exported. Continue?")
+
+        if res == 'no':
+            return
+
+        outfile = 'game_details_' + datetime.now().strftime("%Y-%m-%d") + '.csv'
+
+        f = open(outfile, 'w')
+
+        for d in all_data:
+
+            tag, ope, var, whi, bla, res, com, tac, pla, nta, lpd = d 
+            
+            if var == None:
+                var = ''
+            if com == None:
+                com = ''
+            if tac == True:
+                tac = 't'
+            else:
+                tac = ''
+            if nta == True:
+                nta = 't'
+            else:
+                nta = ''
+
+            if lpd == None:
+                lpd = ''
+            else:
+                lpd = lpd.strftime("%Y-%m-%d")
+                
+            res = str(res)
+            pla = str(pla)
+            
+            line_list = [tag, ope, var, whi, bla, res, com, tac, pla, nta, lpd, '\n']
+            line = ','.join(line_list)
+
+            f.write(line)
+
+        f.close()
+
+    def startGame(self):
+
+        if self.gameList.curselection():
+            pass
+        else: 
+            messagebox.showerror("No game selected", "Please select game to play.")
+            return 
+        
+        self.tagSelect.set(self.tagList[self.gameList.curselection()[0]])
+
+        select_sql = f"select white_moves, black_moves from game_moves where tag = '{self.tagSelect.get()}' "
+
+        moves = self.dataconn.execute_select(select_sql)
+
+        self.displayPlayPanel()
+        
+        self.progress_bar.start()
+        
+        self.loadGameMoves(moves)
+        self.postFirstMove()
+        self.processControl(0)
+
+    def displayResetPanel(self):
+
+        self.resetPanel = Toplevel(self.main_container)
+        self.resetPanel.title('Reset Counts')
+
+        self.res_a = Separator(self.resetPanel, orient=HORIZONTAL)
+        self.res_b = Separator(self.resetPanel, orient=HORIZONTAL)
+        self.res_c = Separator(self.resetPanel, orient=HORIZONTAL)
+
+        self.resetMainA = Label(self.resetPanel, text="RESET GAME PLAY COUNT ", style="M.TLabel" )
+        self.resetMainB = Label(self.resetPanel, text="Reset game play count of selected games ", style="S.TLabel" )
+        self.resetMainC = Label(self.resetPanel, text="to value selected below", style="S.TLabel" )
+
+        self.reset = Button(self.resetPanel, text="RESET", style="B.TButton", command=self.resetGameCount)
+        self.exitReset = Button(self.resetPanel, text="EXIT", style="B.TButton", command=self.resetPanel.destroy)
+
+        self.resetLabel = Label(self.resetPanel, text="RESET VALUE : ", style="S.TLabel" )
+        self.resetTo = OptionMenu(self.resetPanel, self.resToCount, *self.countList)
+        self.resetTo.config(width=5)
+
+        self.resetMainA.grid(row=0, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
+        self.resetMainB.grid(row=1, column=0, columnspan=4, padx=5, pady=1, sticky="NSEW")
+        self.resetMainC.grid(row=2, column=0, columnspan=4, padx=5, pady=1, sticky="NSEW")
+
+        self.res_a.grid(row=3, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
+
+        self.resetLabel.grid(row=4, column=0, columnspan=2, padx=5, pady=5, sticky="NSEW")
+        self.resetTo.grid(row=4, column=2, columnspan=2, padx=5, pady=5, sticky="NSEW")
+
+        self.res_b.grid(row=5, column=0, columnspan=4, padx=5, pady=5, sticky="NSEW")
+
+        self.reset.grid(row=6, column=0, columnspan=2, padx=5, pady=5, sticky="NSEW")
+        self.exitReset.grid(row=6, column=2, columnspan=2, padx=5, pady=5, sticky="NSEW")
+
+        ph = 180
+        pw = 370
+
+        self.resetPanel.maxsize(pw, ph)
+        self.resetPanel.minsize(pw, ph)
+
+        ws = self.resetPanel.winfo_screenwidth()
+        hs = self.resetPanel.winfo_screenheight()
+
+        x = (ws/2) - (pw/2) 
+        y = (hs/2) - (ph/2)
+
+        self.resetPanel.geometry('%dx%d+%d+%d' % (pw, ph, x, y))
+
+        self.processControl(1)
+
+    def resetGameCount(self):
+
+        ''' This function will check the number of games to reset before updating
+            counts
+        ''' 
+
+        if self.check_options() == 0:
+            messagebox.askquestion(parent=self.resetPanel, title="No options", message=f"No options entered and selected. Set options before resetting.")
+            return
+
+        select_sql = "select tag, opening, white, black, result from game_details "
+
+        # where_statement = ''
+        # where_count = 0
+
+        # if self.tag.get():
+        #     add_text = self.tag.get()
+        #     if where_count == 0:
+        #         where_statement = self.add_where(0, where_statement, f"tag like '{add_text}%'")
+        #         where_count += 1
+
+        # if self.opening.get():
+        #     add_text = self.opening.get().capitalize()
+        #     add_text = add_text.replace("'", "''")
+        #     add_opening = f"opening like '%{add_text}%'" 
+        #     if where_count == 0:
+        #         where_statement = self.add_where(0, where_statement, add_opening)
+        #     else:
+        #         where_statement = self.add_where(1, where_statement, add_opening)
+
+        #     where_count += 1
+
+        # if self.player.get():
+        #     add_text = self.player.get().capitalize()
+        #     if add_text.isalnum():
+        #         pass 
+        #     else:
+        #         messagebox.showerror("Error in string","Search string contains special characters. Please remove.")
+        #         return
+            
+        #     add_player = f"(white like '%{add_text}%' or black like '%{add_text}%')"
+        #     if where_count == 0:
+        #         where_statement = self.add_where(0, where_statement, add_player)
+        #     else:
+        #         where_statement = self.add_where(1, where_statement, add_player)
+
+        #     where_count += 1
+
+        # if self.drawGame.get() or self.whiteWin.get() or self.blackWin.get():
+        #     res_count = 0
+        #     if self.whiteWin.get():
+        #         if res_count == 0:
+        #             res_text = "(result = 1"    
+        #         else:
+        #             res_text += " or result = 1 "
+        #         res_count += 1
+
+        #     if self.blackWin.get():
+        #         if res_count == 0:
+        #             res_text = "(result = 2"    
+        #         else:
+        #             res_text += " or result = 2 "
+        #         res_count += 1
+
+        #     if self.drawGame.get():
+        #         if res_count == 0:
+        #             res_text = "(result = 0"
+        #         else:
+        #             res_text += " or result = 0"
+        #         res_count += 1
+
+        #     res_text += ")"
+
+        #     if where_count == 0:
+        #         where_statement = self.add_where(0, where_statement, res_text)
+        #     else:
+        #         where_statement = self.add_where(1, where_statement, res_text)
+        #     where_count += 1
+
+        # if self.selNotable.get():
+        #     nota_text = 'notable = TRUE'
+        #     if where_count == 0:
+        #         where_statement = self.add_where(0, where_statement, nota_text)
+        #     else:
+        #         where_statement = self.add_where(1, where_statement, nota_text)
+        #     where_count += 1
+
+        # if self.selTactical.get():
+        #     tact_text = 'tactical = TRUE'
+        #     if where_count == 0:
+        #         where_statement = self.add_where(0, where_statement, tact_text)
+        #     else:
+        #         where_statement = self.add_where(1, where_statement, tact_text)
+        #     where_count += 1
+
+        # if self.selPlayed.get():
+
+        #     qual_count = self.varCount.get()
+        #     tact_text = f'plays {qual_count} '
+        #     if where_count == 0:
+        #         where_statement = self.add_where(0, where_statement, tact_text)
+        #     else:
+        #         where_statement = self.add_where(1, where_statement, tact_text)
+        #     where_count += 1
+
+        where_statement = self.buildSelectStatement()
         select_sql += where_statement
+
         all_data = self.dataconn.execute_select(select_sql)
 
         row_count = len(all_data)
@@ -954,7 +1121,7 @@ root.title("GAMES MOVES")
 
 # Set size
 
-wh = 500
+wh = 540
 ww = 490
 
 root.resizable(height=False, width=False)
