@@ -483,7 +483,7 @@ class Application(Frame):
             if res == 'no':
                 return
 
-        select_sql = "select tag, opening, white, black, result from game_details "
+        select_sql = "select * from game_details "
 
         where_statement = self.buildSelectStatement()
 
