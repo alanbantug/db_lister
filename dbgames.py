@@ -537,6 +537,7 @@ class Application(Frame):
             f.write(line)
 
         f.close()
+        messagebox.showinfo("Export complete.","Selected games exported successfully")
 
     def startGame(self):
 
