@@ -531,8 +531,8 @@ class Application(Frame):
             res = str(res)
             pla = str(pla)
             
-            line_list = [tag, ope, var, whi, bla, res, com, tac, pla, nta, lpd, '\n']
-            line = ','.join(line_list)
+            line_list = [tag, ope, var, whi, bla, res, com, tac, pla, nta, lpd]
+            line = ','.join(line_list) + '\n'
 
             f.write(line)
 
@@ -1033,6 +1033,7 @@ class Application(Frame):
     def updateDescription(self):
 
         comment = self.popDescription.get(1.0, END).strip()
+        comment = comment.replace(',', '')
 
         update_sql = f"update game_details set comments = '{comment}'"
 
