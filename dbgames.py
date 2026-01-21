@@ -517,14 +517,14 @@ class Application(Frame):
             if tac == True:
                 tac = 't'
             else:
-                tac = ''
+                tac = ' '
             if nta == True:
                 nta = 't'
             else:
-                nta = ''
+                nta = ' '
 
             if lpd == None:
-                lpd = ''
+                lpd = ' '
             else:
                 lpd = lpd.strftime("%Y-%m-%d")
                 
