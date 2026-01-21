@@ -517,11 +517,11 @@ class Application(Frame):
             if tac == True:
                 tac = 't'
             else:
-                tac = ' '
+                tac = 'f'
             if nta == True:
                 nta = 't'
             else:
-                nta = ' '
+                nta = 'f'
 
             if lpd == None:
                 lpd = ' '
