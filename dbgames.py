@@ -532,9 +532,10 @@ class Application(Frame):
             pla = str(pla)
             
             line_list = [tag, ope, var, whi, bla, res, com, tac, pla, nta, lpd]
-            line = ','.join(line_list) + '\n'
+            line = ','.join(line_list)
 
             f.write(line)
+            f.write('\n')
 
         f.close()
         messagebox.showinfo("Export complete.","Selected games exported successfully")
