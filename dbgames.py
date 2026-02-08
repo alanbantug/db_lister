@@ -172,98 +172,6 @@ class Application(Frame):
 
         select_sql = "select tag, opening, white, black, result from game_details "
 
-        # where_count = 0
-
-        # if self.tag.get():
-        #     add_text = self.tag.get()
-        #     if where_count == 0:
-        #         select_sql = self.add_where(0, select_sql, f"tag like '{add_text}%'")
-        #         where_count += 1
-
-        # if self.opening.get():
-        #     add_text = self.opening.get()
-        #     add_text = add_text.replace("'", "''")
-        #     add_opening = f"opening like '%{add_text}%'" 
-        #     if where_count == 0:
-        #         select_sql = self.add_where(0, select_sql, add_opening)
-        #     else:
-        #         select_sql = self.add_where(1, select_sql, add_opening)
-
-        #     where_count += 1
-
-        # if self.player.get():
-        #     add_text = self.player.get().capitalize()
-        #     if add_text.isalnum():
-        #         pass 
-        #     else:
-        #         messagebox.showerror("Error in string","Search string contains special characters. Please remove.")
-        #         return
-            
-        #     add_player = f"(white like '%{add_text}%' or black like '%{add_text}%')"
-        #     if where_count == 0:
-        #         select_sql = self.add_where(0, select_sql, add_player)
-        #     else:
-        #         select_sql = self.add_where(1, select_sql, add_player)
-
-        #     where_count += 1
-
-        # if self.drawGame.get() or self.whiteWin.get() or self.blackWin.get():
-        #     res_count = 0
-        #     if self.whiteWin.get():
-        #         if res_count == 0:
-        #             res_text = "(result = 1"    
-        #         else:
-        #             res_text += " or result = 1 "
-        #         res_count += 1
-
-        #     if self.blackWin.get():
-        #         if res_count == 0:
-        #             res_text = "(result = 2"    
-        #         else:
-        #             res_text += " or result = 2 "
-        #         res_count += 1
-
-        #     if self.drawGame.get():
-        #         if res_count == 0:
-        #             res_text = "(result = 0"
-        #         else:
-        #             res_text += " or result = 0"
-        #         res_count += 1
-
-        #     res_text += ")"
-
-        #     if where_count == 0:
-        #         select_sql = self.add_where(0, select_sql, res_text)
-        #     else:
-        #         select_sql = self.add_where(1, select_sql, res_text)
-        #     where_count += 1
-
-        # if self.selNotable.get():
-        #     nota_text = 'notable = TRUE'
-        #     if where_count == 0:
-        #         select_sql = self.add_where(0, select_sql, nota_text)
-        #     else:
-        #         select_sql = self.add_where(1, select_sql, nota_text)
-        #     where_count += 1
-
-        # if self.selTactical.get():
-        #     tact_text = 'tactical = TRUE'
-        #     if where_count == 0:
-        #         select_sql = self.add_where(0, select_sql, tact_text)
-        #     else:
-        #         select_sql = self.add_where(1, select_sql, tact_text)
-        #     where_count += 1
-
-        # if self.selPlayed.get():
-
-        #     qual_count = self.varCount.get()
-        #     tact_text = f'plays {qual_count} '
-        #     if where_count == 0:
-        #         select_sql = self.add_where(0, select_sql, tact_text)
-        #     else:
-        #         select_sql = self.add_where(1, select_sql, tact_text)
-        #     where_count += 1
-
         where_statement = self.buildSelectStatement()
         select_sql += where_statement
         select_sql += " order by tag"
@@ -344,6 +252,17 @@ class Application(Frame):
                 where_statement = self.add_where(0, where_statement, add_opening)
             else:
                 where_statement = self.add_where(1, where_statement, add_opening)
+
+            where_count += 1
+
+        if self.variation.get():
+            add_text = self.variation.get()
+            add_text = add_text.replace("'", "''")
+            add_variation = f"variation like '%{add_text}%'" 
+            if where_count == 0:
+                where_statement = self.add_where(0, where_statement, add_variation)
+            else:
+                where_statement = self.add_where(1, where_statement, add_variation)
 
             where_count += 1
 
@@ -486,7 +405,6 @@ class Application(Frame):
         select_sql = "select * from game_details "
 
         where_statement = self.buildSelectStatement()
-
         select_sql += where_statement 
         select_sql += " order by tag"
 
@@ -624,100 +542,8 @@ class Application(Frame):
 
         select_sql = "select tag, opening, white, black, result from game_details "
 
-        # where_statement = ''
-        # where_count = 0
-
-        # if self.tag.get():
-        #     add_text = self.tag.get()
-        #     if where_count == 0:
-        #         where_statement = self.add_where(0, where_statement, f"tag like '{add_text}%'")
-        #         where_count += 1
-
-        # if self.opening.get():
-        #     add_text = self.opening.get().capitalize()
-        #     add_text = add_text.replace("'", "''")
-        #     add_opening = f"opening like '%{add_text}%'" 
-        #     if where_count == 0:
-        #         where_statement = self.add_where(0, where_statement, add_opening)
-        #     else:
-        #         where_statement = self.add_where(1, where_statement, add_opening)
-
-        #     where_count += 1
-
-        # if self.player.get():
-        #     add_text = self.player.get().capitalize()
-        #     if add_text.isalnum():
-        #         pass 
-        #     else:
-        #         messagebox.showerror("Error in string","Search string contains special characters. Please remove.")
-        #         return
-            
-        #     add_player = f"(white like '%{add_text}%' or black like '%{add_text}%')"
-        #     if where_count == 0:
-        #         where_statement = self.add_where(0, where_statement, add_player)
-        #     else:
-        #         where_statement = self.add_where(1, where_statement, add_player)
-
-        #     where_count += 1
-
-        # if self.drawGame.get() or self.whiteWin.get() or self.blackWin.get():
-        #     res_count = 0
-        #     if self.whiteWin.get():
-        #         if res_count == 0:
-        #             res_text = "(result = 1"    
-        #         else:
-        #             res_text += " or result = 1 "
-        #         res_count += 1
-
-        #     if self.blackWin.get():
-        #         if res_count == 0:
-        #             res_text = "(result = 2"    
-        #         else:
-        #             res_text += " or result = 2 "
-        #         res_count += 1
-
-        #     if self.drawGame.get():
-        #         if res_count == 0:
-        #             res_text = "(result = 0"
-        #         else:
-        #             res_text += " or result = 0"
-        #         res_count += 1
-
-        #     res_text += ")"
-
-        #     if where_count == 0:
-        #         where_statement = self.add_where(0, where_statement, res_text)
-        #     else:
-        #         where_statement = self.add_where(1, where_statement, res_text)
-        #     where_count += 1
-
-        # if self.selNotable.get():
-        #     nota_text = 'notable = TRUE'
-        #     if where_count == 0:
-        #         where_statement = self.add_where(0, where_statement, nota_text)
-        #     else:
-        #         where_statement = self.add_where(1, where_statement, nota_text)
-        #     where_count += 1
-
-        # if self.selTactical.get():
-        #     tact_text = 'tactical = TRUE'
-        #     if where_count == 0:
-        #         where_statement = self.add_where(0, where_statement, tact_text)
-        #     else:
-        #         where_statement = self.add_where(1, where_statement, tact_text)
-        #     where_count += 1
-
-        # if self.selPlayed.get():
-
-        #     qual_count = self.varCount.get()
-        #     tact_text = f'plays {qual_count} '
-        #     if where_count == 0:
-        #         where_statement = self.add_where(0, where_statement, tact_text)
-        #     else:
-        #         where_statement = self.add_where(1, where_statement, tact_text)
-        #     where_count += 1
-
         where_statement = self.buildSelectStatement()
+
         select_sql += where_statement
 
         all_data = self.dataconn.execute_select(select_sql)
