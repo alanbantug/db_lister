@@ -109,6 +109,7 @@ class Application(Frame):
         self.gameList.config(font=("Courier New", 8), yscrollcommand=self.gscroller.set)
 
         self.start = Button(self.main_container, text="PLAY", style="B.TButton", command=self.startGame)
+        self.report = Button(self.main_container, text="REPORT", style="B.TButton", command=self.reportComments)
         self.export = Button(self.main_container, text="EXPORT", style="B.TButton", command=self.exportGames)
         self.resetCount = Button(self.main_container, text="RESET GAME COUNT", style="B.TButton", command=self.displayResetPanel)
         
@@ -148,7 +149,8 @@ class Application(Frame):
         self.gscroller.grid(row=0, column=3, columnspan=1, padx=5, pady=5, sticky='W')
         self.gameOptions.grid(row=10, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
 
-        self.start.grid(row=11, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        self.start.grid(row=11, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.report.grid(row=11, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
         self.export.grid(row=12, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
         self.resetCount.grid(row=12, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
         
@@ -457,6 +459,62 @@ class Application(Frame):
 
         f.close()
         messagebox.showinfo("Export complete.","Selected games exported successfully")
+
+    def reportComments(self):
+
+        if self.check_options() == 0:
+            game_count = self.getGameCount()[0][0]
+
+            res = messagebox.askquestion(title="Game count", message=f"You will extract {game_count} games. Do you want to continue?")
+            if res == 'no':
+                return
+
+        select_sql = "select tag, opening, variation, white, black, comments from game_details "
+
+        where_statement = self.buildSelectStatement()
+        select_sql += where_statement 
+        select_sql += " order by tag"
+
+        all_data = self.dataconn.execute_select(select_sql)
+
+        data_count = len(all_data)
+        if data_count == 0:
+            messagebox.showerror("No games found","No games found with the selection entered")
+            return
+
+        res = messagebox.askquestion("Select games report", f"Report for {data_count} rows will be created. Continue?")
+
+        if res == 'no':
+            return
+
+        rptfile = 'game_report_' + datetime.now().strftime("%Y-%m-%d") + '.txt'
+
+        f = open(rptfile, 'w')
+
+        for d in all_data:
+
+            tag, ope, var, whi, bla, com = d 
+            if var == None:
+                var = 'No variation'
+            if com == None:
+                com = 'No comment'
+
+            report_line = tag + ' - ' + ' '.join(com.split())
+
+            f.write(report_line)
+            f.write('\n')
+
+        f.close()
+
+        res = messagebox.askquestion(title="View report?", message="Do you want to view report after creation?")
+
+        if res == 'yes':
+
+            work_dir = os.getcwd()
+
+            os.system(str(os.path.basename(rptfile)))
+
+            os.chdir(work_dir)
 
     def startGame(self):
 
