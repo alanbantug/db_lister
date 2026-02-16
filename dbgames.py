@@ -499,7 +499,7 @@ class Application(Frame):
             if com == None:
                 com = 'No comment'
 
-            report_line = tag + ' - ' + ' '.join(com.split())
+            report_line = tag + ' - ' + ope.strip()  + ' - ' + ' '.join(com.split())
 
             f.write(report_line)
             f.write('\n')
