@@ -342,7 +342,6 @@ class Application(Frame):
                 where_statement = self.add_where(1, where_statement, tact_text)
             where_count += 1
 
-        print(where_statement)
         return where_statement
 
     def getGameCount(self):
