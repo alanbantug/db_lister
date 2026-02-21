@@ -7,6 +7,7 @@ from tkinter import messagebox
 import os
 
 from time import time, sleep
+from tkinter.filedialog import askdirectory
 from datetime import date, datetime, timedelta
 
 import subprocess as sp
@@ -247,7 +248,7 @@ class Application(Frame):
                 where_count += 1
 
         if self.opening.get():
-            add_text = self.opening.get().capitalize()
+            add_text = self.opening.get()
             add_text = add_text.replace("'", "''")
             add_opening = f"opening like '%{add_text}%'" 
             if where_count == 0:
@@ -341,6 +342,7 @@ class Application(Frame):
                 where_statement = self.add_where(1, where_statement, tact_text)
             where_count += 1
 
+        print(where_statement)
         return where_statement
 
     def getGameCount(self):
@@ -397,6 +399,8 @@ class Application(Frame):
 
     def exportGames(self):
         
+        filepath = askdirectory()
+
         if self.check_options() == 0:
             game_count = self.getGameCount()[0][0]
 
@@ -422,7 +426,7 @@ class Application(Frame):
         if res == 'no':
             return
 
-        outfile = 'game_details_' + datetime.now().strftime("%Y-%m-%d") + '.csv'
+        outfile = filepath + '/' + 'game_details_' + datetime.now().strftime("%Y-%m-%d") + '.csv'
 
         f = open(outfile, 'w')
 
@@ -462,6 +466,8 @@ class Application(Frame):
 
     def reportComments(self):
 
+        filepath = askdirectory()
+
         if self.check_options() == 0:
             game_count = self.getGameCount()[0][0]
 
@@ -487,7 +493,7 @@ class Application(Frame):
         if res == 'no':
             return
 
-        rptfile = 'game_report_' + datetime.now().strftime("%Y-%m-%d") + '.txt'
+        rptfile = filepath + '/' + 'game_report_' + datetime.now().strftime("%Y-%m-%d") + '.txt'
 
         f = open(rptfile, 'w')
 
