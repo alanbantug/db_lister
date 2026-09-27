@@ -82,44 +82,127 @@ class Application(Frame):
         self.sep_i = Separator(self.main_container, orient=HORIZONTAL)
         self.mainLabel = Label(self.main_container, text="GAME MOVES", style="M.TLabel" )
 
-        self.tagOpt = LabelFrame(self.main_container, text=' TAG ', style="O.TLabelframe")
-        self.tagPattern = Entry(self.tagOpt, textvariable=self.tag, width="18")
-        self.openingOpt = LabelFrame(self.main_container, text=' OPENING ', style="O.TLabelframe")
-        self.openingName = Entry(self.openingOpt, textvariable=self.opening, width="50")
-        self.playerOpt = LabelFrame(self.main_container, text=' PLAYER ', style="O.TLabelframe")
-        self.playerName = Entry(self.playerOpt, textvariable=self.player, width="18")
-        self.variationOpt = LabelFrame(self.main_container, text=' VARIATION ', style="O.TLabelframe")
-        self.variationText = Entry(self.variationOpt, textvariable=self.variation, width="50")
-        self.results = LabelFrame(self.main_container, text=' RESULTS ', style="O.TLabelframe")
-        self.optNotbl = Checkbutton(self.main_container, text=" Notable ", style="B.TCheckbutton", variable=self.selNotable)
-        self.optTactl = Checkbutton(self.main_container, text=" Tactical ", style="B.TCheckbutton", variable=self.selTactical)
-        self.optPlay = Checkbutton(self.main_container, text=" Played ", style="B.TCheckbutton", variable=self.selPlayed)
-        self.playCount = OptionMenu(self.main_container, self.varCount, *self.limitList)
-        self.playCount.config(width=5)
+        # self.tagOpt = LabelFrame(self.main_container, text=' TAG ', style="O.TLabelframe")
+        # self.tagPattern = Entry(self.tagOpt, textvariable=self.tag, width="18")
+        # self.openingOpt = LabelFrame(self.main_container, text=' OPENING ', style="O.TLabelframe")
+        # self.openingName = Entry(self.openingOpt, textvariable=self.opening, width="50")
+        # self.playerOpt = LabelFrame(self.main_container, text=' PLAYER ', style="O.TLabelframe")
+        # self.playerName = Entry(self.playerOpt, textvariable=self.player, width="18")
+        # self.variationOpt = LabelFrame(self.main_container, text=' VARIATION ', style="O.TLabelframe")
+        # self.variationText = Entry(self.variationOpt, textvariable=self.variation, width="50")
+        # self.results = LabelFrame(self.main_container, text=' RESULTS ', style="O.TLabelframe")
+        # self.optNotbl = Checkbutton(self.main_container, text=" Notable ", style="B.TCheckbutton", variable=self.selNotable)
+        # self.optTactl = Checkbutton(self.main_container, text=" Tactical ", style="B.TCheckbutton", variable=self.selTactical)
+        # self.optPlay = Checkbutton(self.main_container, text=" Played ", style="B.TCheckbutton", variable=self.selPlayed)
+        # self.playCount = OptionMenu(self.main_container, self.varCount, *self.limitList)
+        # self.playCount.config(width=5)
 
-        self.white = Checkbutton(self.results, text=" White ", style="B.TCheckbutton", variable=self.whiteWin)
-        self.black = Checkbutton(self.results, text=" Black ", style="B.TCheckbutton", variable=self.blackWin)
-        self.draw = Checkbutton(self.results, text=" Draw ", style="B.TCheckbutton", variable=self.drawGame)
+        # self.white = Checkbutton(self.results, text=" White ", style="B.TCheckbutton", variable=self.whiteWin)
+        # self.black = Checkbutton(self.results, text=" Black ", style="B.TCheckbutton", variable=self.blackWin)
+        # self.draw = Checkbutton(self.results, text=" Draw ", style="B.TCheckbutton", variable=self.drawGame)
 
-        self.fetch = Button(self.main_container, text="GET GAMES", style="B.TButton", width=32, command=self.buildGameList)
-        self.reset = Button(self.main_container, text="RESET OPTIONS", style="B.TButton", width=32, command=self.resetProcess)
+        # self.fetch = Button(self.main_container, text="GET GAMES", style="B.TButton", width=32, command=self.displaySelectPanel)
+        # self.reset = Button(self.main_container, text="RESET OPTIONS", style="B.TButton", width=32, command=self.resetProcess)
         
         self.gameOptions = LabelFrame(self.main_container, text=' SELECT GAMES ', style="O.TLabelframe")
         self.gameList = Listbox(self.gameOptions, selectmode='single', width=60, height=5)
         self.gscroller = Scrollbar(self.gameOptions, orient=VERTICAL, command=self.gameList.yview)
         self.gameList.config(font=("Courier New", 8), yscrollcommand=self.gscroller.set)
-
+        self.selGames = Button(self.gameOptions, text="GAME SELECTION", style="B.TButton", width=32, command=self.displaySelectPanel)
+        self.resetCount = Button(self.gameOptions, text="SET GAME COUNT", style="B.TButton", width=32, command=self.displayResetPanel)
+        # self.reset = Button(self.gameOptions, text="RESET OPTIONS", style="B.TButton", width=32, command=self.resetProcess)
+        
         self.start = Button(self.main_container, text="PLAY", style="B.TButton", command=self.startGame)
         self.report = Button(self.main_container, text="REPORT", style="B.TButton", command=self.reportComments)
         self.export = Button(self.main_container, text="EXPORT", style="B.TButton", command=self.exportGames)
-        self.resetCount = Button(self.main_container, text="RESET GAME COUNT", style="B.TButton", command=self.displayResetPanel)
+        
         
         self.exit = Button(self.main_container, text="EXIT", style="B.TButton", command=self.exitApp)
 
         # Position widgets
         self.mainLabel.grid(row=0, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
         
-        self.sep_a.grid(row=1, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        # self.sep_a.grid(row=1, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+
+        # self.tagPattern.grid(row=0, column=0, padx=10, pady=(5,10), sticky='NSEW')
+        # self.tagOpt.grid(row=2, column=0, columnspan=1, padx=5, pady=5, sticky='NSEW')
+        # self.openingName.grid(row=0, column=0, padx=10, pady=(5,10), sticky='NSEW')
+        # self.openingOpt.grid(row=2, column=1, columnspan=3, padx=5, pady=5, sticky='NSEW')
+        # self.playerName.grid(row=0, column=0, padx=10, pady=(5,10), sticky='NSEW')
+        # self.playerOpt.grid(row=3, column=0, columnspan=1, padx=5, pady=5, sticky='NSEW')
+        # self.variationText.grid(row=0, column=0, padx=10, pady=(5,10), sticky='NSEW')
+        # self.variationOpt.grid(row=3, column=1, columnspan=3, padx=5, pady=5, sticky='NSEW')
+
+        # self.optNotbl.grid(row=4, column=0, padx=10, pady=2, sticky='NSW')
+        # self.optTactl.grid(row=5, column=0, padx=10, pady=2, sticky='NSW')
+        # self.optPlay.grid(row=6, column=0, padx=10, pady=2, sticky='NSW')
+        # self.playCount.grid(row=6, column=0, padx=(80,5), pady=2, sticky='NSW')
+        # self.white.grid(row=0, column=0, padx=10, pady=12, sticky='NSW')
+        # self.black.grid(row=0, column=0, padx=(120,10), pady=12, sticky='NSW')
+        # self.draw.grid(row=0, column=0, padx=(240,10), pady=12, sticky='NSW')
+        # self.results.grid(row=4, rowspan=3, column=1, columnspan=2, padx=5, pady=5, sticky='NSEW')
+
+        # self.sep_a.grid(row=7, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        
+        # self.fetch.grid(row=8, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        # self.reset.grid(row=8, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
+
+        # self.sep_b.grid(row=9, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+                
+        self.gameList.grid(row=0, column=0, columnspan=3, padx=5, pady=5, sticky='W')
+        self.gscroller.grid(row=0, column=3, columnspan=1, padx=5, pady=5, sticky='W')
+        self.selGames.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky='W')
+        # self.reset.grid(row=1, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.resetCount.grid(row=1, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.gameOptions.grid(row=10, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+
+        self.start.grid(row=11, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        self.report.grid(row=12, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.export.grid(row=12, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        # self.resetCount.grid(row=12, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        
+        self.sep_c.grid(row=13, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        
+        self.exit.grid(row=14, column=0, columnspan=4, padx=5, pady=0, sticky='NSEW')
+
+        self.dataconn = db.databaseConn()
+        self.processControl(1)
+
+    def displaySelectPanel(self):
+        
+        self.selectGames = Toplevel(self.main_container)
+        self.selectGames.title('Select Games')
+
+        self.sel_a = Separator(self.selectGames, orient=HORIZONTAL)
+        self.sel_b = Separator(self.selectGames, orient=HORIZONTAL)
+        self.sel_c = Separator(self.selectGames, orient=HORIZONTAL)
+
+        self.tagOpt = LabelFrame(self.selectGames, text=' TAG ', style="O.TLabelframe")
+        self.tagPattern = Entry(self.tagOpt, textvariable=self.tag, width="18")
+        self.openingOpt = LabelFrame(self.selectGames, text=' OPENING ', style="O.TLabelframe")
+        self.openingName = Entry(self.openingOpt, textvariable=self.opening, width="50")
+        self.playerOpt = LabelFrame(self.selectGames, text=' PLAYER ', style="O.TLabelframe")
+        self.playerName = Entry(self.playerOpt, textvariable=self.player, width="18")
+        self.variationOpt = LabelFrame(self.selectGames, text=' VARIATION ', style="O.TLabelframe")
+        self.variationText = Entry(self.variationOpt, textvariable=self.variation, width="50")
+        self.results = LabelFrame(self.selectGames, text=' RESULTS ', style="O.TLabelframe")
+        self.optNotbl = Checkbutton(self.selectGames, text=" Notable ", style="B.TCheckbutton", variable=self.selNotable)
+        self.optTactl = Checkbutton(self.selectGames, text=" Tactical ", style="B.TCheckbutton", variable=self.selTactical)
+        self.optPlay = Checkbutton(self.selectGames, text=" Played ", style="B.TCheckbutton", variable=self.selPlayed)
+        self.playCount = OptionMenu(self.selectGames, self.varCount, *self.limitList)
+        self.playCount.config(width=5)
+
+        self.white = Checkbutton(self.results, text=" White ", style="B.TCheckbutton", variable=self.whiteWin)
+        self.black = Checkbutton(self.results, text=" Black ", style="B.TCheckbutton", variable=self.blackWin)
+        self.draw = Checkbutton(self.results, text=" Draw ", style="B.TCheckbutton", variable=self.drawGame)
+
+        self.results = LabelFrame(self.sortOptions, text=' SORT BY ', style="O.TLabelframe")
+        self.byTag = Radiobutton(self.results, text=" Tag ", style="B.TRadiobutton", variable=self.sortOpt)
+        self.byOpen = Radiobutton(self.results, text=" Opening ", style="B.TRadiobutton", variable=self.sortOpt)
+
+        self.fetch = Button(self.selectGames, text="GET GAMES", style="B.TButton", width=32, command=self.buildGameList)
+        self.reset = Button(self.selectGames, text="CLEAR OPTIONS", style="B.TButton", width=32, command=self.resetProcess)
+        self.selCancel = Button(self.selectGames, text="EXIT", style="B.TButton", width=32, command=self.hideSelect)
 
         self.tagPattern.grid(row=0, column=0, padx=10, pady=(5,10), sticky='NSEW')
         self.tagOpt.grid(row=2, column=0, columnspan=1, padx=5, pady=5, sticky='NSEW')
@@ -139,28 +222,25 @@ class Application(Frame):
         self.draw.grid(row=0, column=0, padx=(240,10), pady=12, sticky='NSW')
         self.results.grid(row=4, rowspan=3, column=1, columnspan=2, padx=5, pady=5, sticky='NSEW')
 
-        self.sep_b.grid(row=7, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        self.sel_a.grid(row=7, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
         
         self.fetch.grid(row=8, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
         self.reset.grid(row=8, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.selCancel.grid(row=9, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
 
-        self.sep_c.grid(row=9, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
-                
-        self.gameList.grid(row=0, column=0, columnspan=3, padx=5, pady=5, sticky='W')
-        self.gscroller.grid(row=0, column=3, columnspan=1, padx=5, pady=5, sticky='W')
-        self.gameOptions.grid(row=10, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        sh = 280
+        sw = 500
 
-        self.start.grid(row=11, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
-        self.report.grid(row=11, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
-        self.export.grid(row=12, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
-        self.resetCount.grid(row=12, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
-        
-        self.sep_e.grid(row=13, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
-        
-        self.exit.grid(row=14, column=0, columnspan=4, padx=5, pady=0, sticky='NSEW')
+        self.selectGames.maxsize(sw, sh)
+        self.selectGames.minsize(sw, sh)
 
-        self.dataconn = db.databaseConn()
-        self.processControl(1)
+        ws = self.selectGames.winfo_screenwidth()
+        hs = self.selectGames.winfo_screenheight()
+
+        x = (ws/2) - (sw/2) 
+        y = (hs/2) - (sh/2)
+
+        self.selectGames.geometry('%dx%d+%d+%d' % (sw, sh, x, y))
 
     def buildGameList(self):
 
@@ -173,7 +253,7 @@ class Application(Frame):
             if res == 'no':
                 return
 
-        select_sql = "select tag, opening, white, black, result from game_details "
+        select_sql = "select tag, opening, variation, result from game_details "
 
         where_statement = self.buildSelectStatement()
         select_sql += where_statement
@@ -188,17 +268,21 @@ class Application(Frame):
         self.tagList = []
         for dat in all_data:
             
-            t, o, w, b, r = dat
+            t, o, v, r = dat
             
             self.tagList.append(t)
 
-            g = t.strip() + '(' + self.checkAdvantage(r) + ')' + ' - ' + o.strip() + ' - ' + w.strip() + ' - ' + b.strip()  
+            if v:
+                g = t.strip() + '(' + self.checkAdvantage(r) + ')' + ' - ' + o.strip() + ' - ' + v.strip()   
+            else:
+                g = t.strip() + '(' + self.checkAdvantage(r) + ')' + ' - ' + o.strip() 
 
             self.gameList.insert(END, g)
 
         msg = f"There are {len(all_data)} games selected"
 
-        messagebox.showinfo("Games selected", msg)
+        messagebox.showinfo(parent=self.selectGames, title="Games selected", message=msg)
+        self.selectGames.destroy()
 
     def check_options(self):
 
@@ -546,20 +630,20 @@ class Application(Frame):
     def displayResetPanel(self):
 
         self.resetPanel = Toplevel(self.main_container)
-        self.resetPanel.title('Reset Counts')
+        self.resetPanel.title('Set Counts')
 
         self.res_a = Separator(self.resetPanel, orient=HORIZONTAL)
         self.res_b = Separator(self.resetPanel, orient=HORIZONTAL)
         self.res_c = Separator(self.resetPanel, orient=HORIZONTAL)
 
-        self.resetMainA = Label(self.resetPanel, text="RESET GAME PLAY COUNT ", style="M.TLabel" )
-        self.resetMainB = Label(self.resetPanel, text="Reset game play count of selected games ", style="S.TLabel" )
+        self.resetMainA = Label(self.resetPanel, text="SET GAME PLAY COUNT ", style="M.TLabel" )
+        self.resetMainB = Label(self.resetPanel, text="Set game play count of selected games ", style="S.TLabel" )
         self.resetMainC = Label(self.resetPanel, text="to value selected below", style="S.TLabel" )
 
-        self.reset = Button(self.resetPanel, text="RESET", style="B.TButton", command=self.resetGameCount)
+        self.reset = Button(self.resetPanel, text="SET", style="B.TButton", command=self.resetGameCount)
         self.exitReset = Button(self.resetPanel, text="EXIT", style="B.TButton", command=self.resetPanel.destroy)
 
-        self.resetLabel = Label(self.resetPanel, text="RESET VALUE : ", style="S.TLabel" )
+        self.resetLabel = Label(self.resetPanel, text="COUNT VALUE : ", style="S.TLabel" )
         self.resetTo = OptionMenu(self.resetPanel, self.resToCount, *self.countList)
         self.resetTo.config(width=5)
 
@@ -976,6 +1060,10 @@ class Application(Frame):
         self.close["state"] = NORMAL
         self.popMoves.destroy()
 
+    def hideSelect(self):
+
+        self.selectGames.destroy()
+
     def restartMoves(self):
 
         res = messagebox.askquestion(parent=self.playMoves, title="Restart moves?", message="Do you want to restart game/opening?")
@@ -992,15 +1080,15 @@ class Application(Frame):
 
         if mode:
             
-            self.fetch["state"] = NORMAL
-            self.reset["state"] = NORMAL
+            # self.fetch["state"] = NORMAL
+            # self.reset["state"] = NORMAL
             self.start["state"] = NORMAL
             self.exit["state"] = NORMAL
 
         else:
 
-            self.fetch["state"] = DISABLED
-            self.reset["state"] = DISABLED
+            # self.fetch["state"] = DISABLED
+            # self.reset["state"] = DISABLED
             self.start["state"] = DISABLED
             self.exit["state"] = DISABLED
 
@@ -1013,8 +1101,8 @@ root.title("GAMES MOVES")
 
 # Set size
 
-wh = 540
-ww = 490
+wh = 310
+ww = 500
 
 root.resizable(height=False, width=False)
 
