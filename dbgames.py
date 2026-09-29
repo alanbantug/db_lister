@@ -46,7 +46,10 @@ class Application(Frame):
         self.sortOpt = IntVar()
         self.tagList = []
         self.varCount = StringVar()
-        self.limitList = ['= 0', '= 0', '= 1', '>= 1', '=2', '>= 2']
+        self.prevCount = StringVar()
+        self.limitList = ['= 0', '= 0', '= 1', '>= 1', '=2', '>= 2', '= 3', '>= 3']
+
+        self.selecting = IntVar()
 
         self.resToCount = StringVar()
         self.countList = ['0', '0', '1', '2', '3', '4']
@@ -87,7 +90,8 @@ class Application(Frame):
         self.gameList = Listbox(self.gameOptions, selectmode='single', width=60, height=10)
         self.gscroller = Scrollbar(self.gameOptions, orient=VERTICAL, command=self.gameList.yview)
         self.gameList.config(font=("Courier New", 8), yscrollcommand=self.gscroller.set)
-        self.selGames = Button(self.gameOptions, text="GAME SELECTION", style="B.TButton", width=32, command=self.displaySelectPanel)
+        self.selGames = Button(self.gameOptions, text="SELECT GAMES", style="B.TButton", width=64, command=self.displaySelectPanel)
+        self.refreshList = Button(self.gameOptions, text="REFRESH", style="B.TButton", width=32, command=self.buildGameList)
         self.resetCount = Button(self.gameOptions, text="SET GAME COUNT", style="B.TButton", width=32, command=self.displayResetPanel)
         
         self.start = Button(self.main_container, text="PLAY", style="B.TButton", command=self.startGame)
@@ -102,8 +106,9 @@ class Application(Frame):
         
         self.gameList.grid(row=0, column=0, columnspan=3, padx=5, pady=5, sticky='W')
         self.gscroller.grid(row=0, column=3, columnspan=1, padx=5, pady=5, sticky='W')
-        self.selGames.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky='W')
-        self.resetCount.grid(row=1, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.selGames.grid(row=1, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        self.refreshList.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.resetCount.grid(row=2, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
         self.gameOptions.grid(row=10, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
 
         self.start.grid(row=11, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
@@ -190,11 +195,16 @@ class Application(Frame):
         hs = self.selectGames.winfo_screenheight()
 
         x = (ws/2) - (sw/2) 
-        y = (hs/2) - (sh/2) + 200
+        y = (hs/2) - (sh/2) - 200
 
         self.selectGames.geometry('%dx%d+%d+%d' % (sw, sh, x, y))
 
         self.processControl(0)
+
+        if self.prevCount.get():
+            self.varCount.set(self.prevCount.get())
+
+        self.selecting.set(1)
 
     def buildGameList(self):
 
@@ -239,7 +249,10 @@ class Application(Frame):
 
         msg = f"There are {len(all_data)} games selected"
 
-        messagebox.showinfo(parent=self.selectGames, title="Games selected", message=msg)
+        if self.selecting.get():
+            messagebox.showinfo(parent=self.selectGames, title="Games selected", message=msg)
+        else:
+            messagebox.showinfo(parent=self.main_container, title="Games selected", message=msg)
 
         self.hideSelect()
 
@@ -378,6 +391,7 @@ class Application(Frame):
         if self.selPlayed.get():
 
             qual_count = self.varCount.get()
+
             tact_text = f'plays {qual_count} '
             if where_count == 0:
                 where_statement = self.add_where(0, where_statement, tact_text)
@@ -1026,6 +1040,8 @@ class Application(Frame):
 
     def hideSelect(self):
 
+        self.selecting.set(0)
+        self.prevCount.set(self.varCount.get())
         self.processControl(1)
         self.selectGames.destroy()
 
@@ -1046,6 +1062,7 @@ class Application(Frame):
         if mode:
             
             self.selGames["state"] = NORMAL
+            self.refreshList["state"] = NORMAL
             self.resetCount["state"] = NORMAL
             self.start["state"] = NORMAL
             self.report["state"] = NORMAL
@@ -1055,6 +1072,7 @@ class Application(Frame):
         else:
 
             self.selGames["state"] = DISABLED
+            self.refreshList["state"] = DISABLED
             self.resetCount["state"] = DISABLED
             self.start["state"] = DISABLED
             self.report["state"] = DISABLED
@@ -1070,7 +1088,7 @@ root.title("GAMES MOVES")
 
 # Set size
 
-wh = 380
+wh = 420
 ww = 500
 
 root.resizable(height=False, width=False)
