@@ -635,7 +635,7 @@ class Application(Frame):
         self.exitReset.grid(row=6, column=2, columnspan=2, padx=5, pady=5, sticky="NSEW")
 
         ph = 180
-        pw = 370
+        pw = 340
 
         self.resetPanel.maxsize(pw, ph)
         self.resetPanel.minsize(pw, ph)
@@ -683,9 +683,9 @@ class Application(Frame):
         update_sql += where_statement
 
         if self.dataconn.execute_update(update_sql):
-            messagebox.showinfo("Update complete.","Updated plays successfully")
+            messagebox.showinfo(parent=self.resetPanel, title="Update complete.", message="Updated plays successfully")
         else:
-            messagebox.showerror("Update error.","Error updating plays")
+            messagebox.showerror(parent=self.resetPanel, title="Update error.", message="Error updating plays")
     
     def displayPlayPanel(self):
 
