@@ -84,7 +84,7 @@ class Application(Frame):
         self.sep_g = Separator(self.main_container, orient=HORIZONTAL)
         self.sep_h = Separator(self.main_container, orient=HORIZONTAL)
         self.sep_i = Separator(self.main_container, orient=HORIZONTAL)
-        self.mainLabel = Label(self.main_container, text="GAME MOVES", style="M.TLabel" )
+        self.mainLabel = Label(self.main_container, text="PLAY GAMES", style="M.TLabel" )
 
         self.gameOptions = LabelFrame(self.main_container, text=' SELECT GAMES ', style="O.TLabelframe")
         self.gameList = Listbox(self.gameOptions, selectmode='single', width=60, height=10)
@@ -97,27 +97,30 @@ class Application(Frame):
         self.start = Button(self.main_container, text="PLAY", style="B.TButton", command=self.startGame)
         self.report = Button(self.main_container, text="REPORT", style="B.TButton", command=self.reportComments)
         self.export = Button(self.main_container, text="EXPORT", style="B.TButton", command=self.exportGames)
-        
-        
+                
         self.exit = Button(self.main_container, text="EXIT", style="B.TButton", command=self.exitApp)
 
         # Position widgets
         self.mainLabel.grid(row=0, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
         
+        self.sep_a.grid(row=1, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+
         self.gameList.grid(row=0, column=0, columnspan=3, padx=5, pady=5, sticky='W')
         self.gscroller.grid(row=0, column=3, columnspan=1, padx=5, pady=5, sticky='W')
         self.selGames.grid(row=1, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
         self.refreshList.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
         self.resetCount.grid(row=2, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
-        self.gameOptions.grid(row=10, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        self.gameOptions.grid(row=2, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
 
-        self.start.grid(row=11, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
-        self.report.grid(row=12, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
-        self.export.grid(row=12, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.sep_b.grid(row=3, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+
+        self.start.grid(row=4, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        self.report.grid(row=5, column=0, columnspan=2, padx=5, pady=5, sticky='NSEW')
+        self.export.grid(row=5, column=2, columnspan=2, padx=5, pady=5, sticky='NSEW')
         
-        self.sep_c.grid(row=13, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
+        self.sep_c.grid(row=6, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
         
-        self.exit.grid(row=14, column=0, columnspan=4, padx=5, pady=0, sticky='NSEW')
+        self.exit.grid(row=7, column=0, columnspan=4, padx=5, pady=0, sticky='NSEW')
 
         self.dataconn = db.databaseConn()
         self.processControl(1)
@@ -1084,11 +1087,11 @@ class Application(Frame):
         root.destroy()
 
 root = Tk()
-root.title("GAMES MOVES")
+root.title("PLAY GAMES ")
 
 # Set size
 
-wh = 420
+wh = 440
 ww = 500
 
 root.resizable(height=False, width=False)
