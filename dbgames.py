@@ -1,6 +1,7 @@
 import tkinter
 from tkinter import *
 
+from tkinter import font
 from tkinter.ttk import *
 from tkinter import messagebox
 
@@ -57,6 +58,9 @@ class Application(Frame):
         # Create main frame
         self.main_container.grid(column=0, row=0, sticky=(N,S,E,W))
 
+        # font styles
+        efont = font.Font(family='Verdana', size=16)
+
         # Set Label styles
         Style().configure("M.TLabel", font="Courier 20 bold", height="20", foreground="blue", anchor="center")
         Style().configure("B.TLabel", font="Verdana 8", background="white", width="25")
@@ -68,6 +72,7 @@ class Application(Frame):
 
         # Set button styles
         Style().configure("B.TButton", font="Verdana 8", relief="ridge")
+        Style().configure("L.TButton", font=efont, relief="raised", height=20)
 
         # Set check button styles
         Style().configure("B.TCheckbutton", font="Verdana 8")
@@ -94,11 +99,11 @@ class Application(Frame):
         self.refreshList = Button(self.gameOptions, text="REFRESH", style="B.TButton", width=32, command=self.buildGameList)
         self.resetCount = Button(self.gameOptions, text="SET GAME COUNT", style="B.TButton", width=32, command=self.displayResetPanel)
         
-        self.start = Button(self.main_container, text="PLAY", style="B.TButton", command=self.startGame)
+        self.start = Button(self.main_container, text="PLAY", style="L.TButton", command=self.startGame)
         self.report = Button(self.main_container, text="REPORT", style="B.TButton", command=self.reportComments)
         self.export = Button(self.main_container, text="EXPORT", style="B.TButton", command=self.exportGames)
                 
-        self.exit = Button(self.main_container, text="EXIT", style="B.TButton", command=self.exitApp)
+        self.exit = Button(self.main_container, text="EXIT", style="L.TButton", command=self.exitApp)
 
         # Position widgets
         self.mainLabel.grid(row=0, column=0, columnspan=4, padx=5, pady=5, sticky='NSEW')
@@ -233,7 +238,9 @@ class Application(Frame):
         all_data = self.dataconn.execute_select(select_sql)
 
         if len(all_data) == 0:
-            messagebox.showerror("No games found","No games found with the selection entered")
+            msg = "No games found with the selection entered"
+            ttl = "No games found"
+            messagebox.showinfo(parent=self.selectGames, title=ttl, message=msg)
             return
 
         self.tagList = []
@@ -1091,7 +1098,7 @@ root.title("PLAY GAMES ")
 
 # Set size
 
-wh = 440
+wh = 460
 ww = 500
 
 root.resizable(height=False, width=False)
